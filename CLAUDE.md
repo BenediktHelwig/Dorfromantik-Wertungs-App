@@ -11,7 +11,7 @@ Wertungs- und Kampagnen-App für das Brettspiel Dorfromantik (Basisspiel und sp�
 - Bezeichner im Code englisch, Fachbegriffe (Spielnummer, Freigespielt, Eure Erfolge) in Kommentaren und UI deutsch.
 
 ## Stand
-- Fertig: Highscoreliste inkl. Zeilen 500/600/700, Wertungsblatt Basisspiel (B–E, S1–S3, H, Prüfung), Wirkung von Freischaltungen ab der Folgepartie, Automatismus Goldenes Herz, „Eure Ergebnisse“ mit Kreuzen.
+- Fertig: Highscoreliste inkl. Zeilen 500/600/700, Wertungsblatt Basisspiel (B–E, S1–S3, H, Prüfung), Wirkung von Freischaltungen ab der Folgepartie, Erfolgskarten der Schachteln mit automatischer Prüfung am Partieende (`src/core/achievements.js`), „Eure Ergebnisse“ mit Kreuzen.
 - Prototyp-UI in `web/` (nur zum Ausprobieren, wird später durch die Nextcloud-Oberfläche ersetzt).
 
 ## Roadmap

@@ -21,9 +21,37 @@ Ergebnis auf die nächstniedrigere Zeile abrunden (128 → 120). Die Spielnummer
 Zusätzlich drei Zeilen ohne Titel: 500, 600, 700 mit je 15 Kreuzen (fest, gleiche Abrundung: ab 700 → Zeile 700).
 
 ## Freischaltungen und Wirkung
-- „Eure Erfolge“: Bereich Kampagnenblatt (12 Einträge, automatisch über den Fortschrittsbaum) und Bereich Schachteln (14 Einträge, manuell). Pro Eintrag eine Spielnummer.
-- Ein Bonus ist im Wertungsblatt von Spiel N aktiv, wenn seine Spielnummer kleiner als N ist (Wirkung ab der Folgepartie; für Goldenes Herz bestätigt, allgemein noch zu bestätigen).
-- **Goldenes Herz:** Hat der Eintrag ein Kreuz (Karte erhalten) und stehen bei Rote Herzen erstmals mindestens 18 Punkte, trägt die App die aktuelle Spielnummer ein. Nur einmal, danach verbraucht.
+- „Eure Erfolge“: Bereich Kampagnenblatt (12 Einträge, automatisch über den Fortschrittsbaum) und Bereich Schachteln (14 Einträge). Pro Eintrag ein Kreuz (Karte erhalten) und eine Spielnummer (Aufgabe erfüllt).
+- **Zeitpunkt (bestätigt):** Eine Erfolgskarte wird immer erst am Ende einer Partie freigeschaltet. Was daraus folgt (neue Regel, Bonus), gilt ab der nächsten Partie. Ein Bonus ist also im Wertungsblatt von Spiel N aktiv, wenn seine Spielnummer kleiner als N ist.
+- Jede Karte wird nur einmal erfüllt. Ist die Spielnummer gesetzt, prüft die App sie nicht mehr.
+
+### Erfolgskarten aus den Schachteln
+Quelle: `Basisspiel_Freischaltregeln.md`. Bedingung = in einer Partie erreichen. Erfüllung: **auto** = App prüft das Wertungsblatt und trägt die Spielnummer ein, **bestätigen** = App erkennt eine wahrscheinliche Erfüllung und fragt nach, **manuell** = Spieler bestätigt selbst, **KB** = über das Kampagnenblatt.
+
+| Schachtel | Karte | Bedingung | Erfüllung | Prüfung in der App |
+|---|---|---|---|---|
+| 1 | Rote Herzen | „Erfolg freigespielt“, kommt mit Schachtel 1 | KB | Schachtel 1 geöffnet |
+| 1 | Herzenswünsche | am Partieende 6 P durch 1 Herz | bestätigen | E Rote Herzen ≥ 6 |
+| 2 | Auf Erfolgsspur | ≥ 200 P | auto | H ≥ 200 |
+| 4 | Erntefest | ≥ 30 P durch Getreideaufträge | auto | B2 ≥ 30 |
+| 4 | Lokomotive | ≥ 30 P durch Gleisaufträge | auto | B4 ≥ 30 |
+| 4 | Schiff | ≥ 30 P durch Flussaufträge | auto | B5 ≥ 30 |
+| 4 | Wachturm | ≥ 30 P durch Dorfaufträge | auto | B3 ≥ 30 |
+| 4 | Waldhütte | ≥ 30 P durch Waldaufträge | auto | B1 ≥ 30 |
+| 5 | Bahnhof | ≥ 180 P + Gleis aus ≥ 12 Plättchen | auto | H ≥ 180 und D1 ≥ 12 |
+| 5 | Ballon-Startplatz | ≥ 300 P | auto | H ≥ 300 |
+| 5 | Baustelle | ≥ 157 P durch Aufträge (ohne P durch Sonderplättchen) | auto | S1 ≥ 157 |
+| 5 | Fahnenfest | ≥ 40 P durch ein Gebiet mit 3 Fahnen | manuell | – |
+| 5 | Goldenes Herz | ≥ 18 P durch rote Herzen | auto | E Rote Herzen ≥ 18 |
+| 5 | Hafen | ≥ 180 P + Fluss aus ≥ 12 Plättchen | auto | H ≥ 180 und D2 ≥ 12 |
+
+Weitere Inhalte: Schachtel 1 bringt 5 Auftragsplättchen, 5 4er-Marker und 1 rotes Holzherz. Schachtel 2 bringt 5 Landschaftsplättchen. Schachtel 3 enthält die 12 Erfolgskarten des Kampagnenblatts (je einzeln über das KB), 8 Sonderplättchen, 3 7er-Aufträge und 3 rote Herzen (erst über das KB freigeschaltet). Schachtel 4 bringt 5 Sonderplättchen, Schachtel 5 bringt 5 Sonderplättchen, 1 Ballonplättchen und 1 goldenes Holzherz.
+
+Rote Herzen: Pro Herz höchstens 6 P (1 Herz aus Schachtel 1, 3 weitere über das KB).
+
+### Offene Fragen
+- Bringt Herzenswünsche selbst ein weiteres Herz, und hängen die 3 Herzen vom KB davon ab? Davon hängt die Prüfung „Rote Herzen ≤ 6 P je Herz“ ab (noch nicht umgesetzt).
+- Wann bekommen die Karten der Schachteln 4 und 5 ihr Kreuz, also wann werden diese Schachteln geöffnet (z. B. durch Auf Erfolgsspur)? Bis dahin setzt der Spieler das Kreuz selbst.
 
 ## Korrektur
 Gespeicherte Wertungsblätter dürfen geändert werden. Alles Abgeleitete (Zeile in „Eure Ergebnisse“, Kreuze, automatische Freischaltungen) wird neu berechnet.

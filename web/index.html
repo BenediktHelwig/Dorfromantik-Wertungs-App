@@ -52,9 +52,12 @@
 
       <section>
         <h2>Eure Erfolge (Testdaten)</h2>
-        <p class="hint">Spielnummer der Freischaltung eintragen. Wirkt ab dem nächsten Spiel.</p>
-        <label class="inline"><input type="checkbox" id="golden-card"> Karte „Goldenes Herz“ erhalten</label>
-        <div id="unlocks" class="unlocks"></div>
+        <p class="hint">Häkchen = Karte erhalten. Zahl = Spielnummer der Freischaltung, wirkt ab dem nächsten Spiel. Beim Speichern setzt die App erfüllte Karten selbst.</p>
+        <p id="last-unlocks" class="notice"></p>
+        <h3>Schachteln</h3>
+        <div id="unlocks-boxes" class="unlocks"></div>
+        <h3>Kampagnenblatt</h3>
+        <div id="unlocks-board" class="unlocks"></div>
         <button type="button" id="reset">Demo-Kampagne zurücksetzen</button>
       </section>
     </aside>

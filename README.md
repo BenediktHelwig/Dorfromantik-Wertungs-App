@@ -19,7 +19,8 @@ npm start    # Prototyp unter http://localhost:8080/web/
 src/core/        Rechenlogik ohne UI, voll getestet
   highscore.js   Highscoreliste, Abrunden auf Zeile, Kreuze
   scoresheet.js  Wertungsblatt: Felder, Summen S1–S3, Ergebnis, Prüfung
-  unlocks.js     Wirkung von Freischaltungen, Automatismus Goldenes Herz
+  unlocks.js     Wirkung von Freischaltungen ab der Folgepartie
+  achievements.js Erfolgskarten der Schachteln, Prüfung am Partieende
   campaign.js    "Eure Ergebnisse", Kreuze gesamt, Spielnummern
 test/            Tests je Modul
 web/             Prototyp der Wertungsmaske (HTML/CSS/JS, ES-Module)
@@ -33,7 +34,7 @@ Grundsatz: Gespeichert werden nur Rohdaten (Wertungsblätter und Entscheidungen 
 
 - Werte in B–E eintragen, Summen und Ergebnis rechnen sich live.
 - „Wertung speichern“ fragt nach, ob alles eingetragen ist, trägt das Ergebnis unter „Eure Ergebnisse“ ein und legt das nächste Blatt an.
-- Rechts unter „Eure Erfolge (Testdaten)“ lassen sich Freischaltungen simulieren. Ein Bonus mit Spielnummer N ist ab Spiel N+1 im Wertungsblatt freigespielt.
+- Rechts unter „Eure Erfolge (Testdaten)“: Häkchen = Karte erhalten. Beim Speichern trägt die App erfüllte Karten selbst ein (bei Herzenswünsche fragt sie nach). Ein Bonus mit Spielnummer N ist ab Spiel N+1 freigespielt.
 - Die Demo-Kampagne liegt im `localStorage` des Browsers.
 
 ## Nächste Schritte

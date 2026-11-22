@@ -24,12 +24,12 @@ h2 { font-size: 1rem; margin: 0 0 0.5rem; }
 label { display: flex; flex-direction: column; font-size: 0.85rem; gap: 0.2rem; }
 label.players { margin-bottom: 1rem; }
 label.inline { flex-direction: row; align-items: center; gap: 0.4rem; }
-input[type="number"], input[type="text"] { font-size: 1rem; padding: 0.35rem; border: 1px solid #ccc4b4; border-radius: 4px; }
+input[type="number"], input[type="text"] { box-sizing: border-box; width: 100%; min-width: 0; font-size: 1rem; padding: 0.35rem; border: 1px solid #ccc4b4; border-radius: 4px; }
 input:disabled { background: #eee9de; }
 
 .bonuses { display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); gap: 0.5rem; }
 .bonus { display: flex; align-items: flex-end; gap: 0.5rem; }
-.bonus label { flex: 1; }
+.bonus label { flex: 1; min-width: 0; }
 .bonus.locked { opacity: 0.55; }
 
 .subtotal { text-align: right; font-weight: 600; margin: 0; }
@@ -41,4 +41,8 @@ button[type="button"] { background: var(--muted); margin-top: 0.75rem; }
 
 table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
 th, td { text-align: left; padding: 0.2rem 0.3rem; border-bottom: 1px solid #ece6d8; }
-.unlocks { display: grid; grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); gap: 0.4rem; margin-top: 0.5rem; }
+.unlocks { display: grid; grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr)); gap: 0.4rem; margin-top: 0.5rem; }
+.unlock { display: flex; align-items: flex-end; gap: 0.35rem; }
+.unlock label { flex: 1; min-width: 0; }
+h3 { font-size: 0.9rem; margin: 0.75rem 0 0.25rem; }
+.notice { color: var(--accent); font-weight: 600; min-height: 1em; }

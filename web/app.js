@@ -6,15 +6,17 @@ import {
   createScoresheet, computeTotals, validateScoresheet,
 } from '../src/core/scoresheet.js';
 import { highscoreRow } from '../src/core/highscore.js';
-import { activeBonusIds, goldenHeartUnlock } from '../src/core/unlocks.js';
+import { activeBonusIds } from '../src/core/unlocks.js';
+import { ACHIEVEMENTS, evaluateAchievements } from '../src/core/achievements.js';
 import { campaignResults, nextGameNumber } from '../src/core/campaign.js';
 
 const STORAGE_KEY = 'dorfromantik-demo-kampagne';
-const emptyCampaign = () => ({ sheets: [], unlocks: {}, goldenHeartCard: false });
+const emptyCampaign = () => ({ sheets: [], unlocks: {}, received: [] });
 
 function loadCampaign() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? emptyCampaign();
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return stored ? { ...emptyCampaign(), ...stored } : emptyCampaign();
   } catch {
     return emptyCampaign();
   }
@@ -104,6 +106,30 @@ function update() {
   }
 }
 
+function unlockRow(id, label, { receivable = false, title = '' } = {}) {
+  const row = document.createElement('div');
+  row.className = 'unlock';
+  row.title = title;
+  if (receivable) {
+    const check = document.createElement('input');
+    Object.assign(check, { type: 'checkbox', checked: campaign.received.includes(id), title: 'Karte erhalten' });
+    check.addEventListener('change', () => {
+      campaign.received = check.checked
+        ? [...new Set([...campaign.received, id])]
+        : campaign.received.filter((r) => r !== id);
+      saveCampaign();
+    });
+    row.append(check);
+  }
+  const field = numberField(label, campaign.unlocks[id] ?? '', (v) => {
+    campaign.unlocks[id] = v > 0 ? v : null;
+    saveCampaign();
+  });
+  field.querySelector('input').addEventListener('change', refreshUnlocked);
+  row.append(field);
+  return row;
+}
+
 function renderCampaign() {
   const { rows, totalCrosses } = campaignResults(campaign.sheets);
   $('#crosses').textContent = totalCrosses;
@@ -115,15 +141,11 @@ function renderCampaign() {
     return tr;
   }));
 
-  $('#golden-card').checked = campaign.goldenHeartCard;
-  $('#unlocks').replaceChildren(...BONUSES.map(({ id, label }) => {
-    const field = numberField(label, campaign.unlocks[id] ?? '', (v) => {
-      campaign.unlocks[id] = v > 0 ? v : null;
-      saveCampaign();
-    });
-    field.querySelector('input').addEventListener('change', refreshUnlocked);
-    return field;
-  }));
+  $('#unlocks-boxes').replaceChildren(...ACHIEVEMENTS.map((a) =>
+    unlockRow(a.id, `${a.label} (S${a.box})`, { receivable: a.kind !== 'board', title: a.condition })));
+  const achievementIds = new Set(ACHIEVEMENTS.map((a) => a.id));
+  $('#unlocks-board').replaceChildren(...BONUSES.filter((b) => !achievementIds.has(b.id)).map((b) =>
+    unlockRow(b.id, b.label)));
 }
 
 // Testdaten geändert: Freigespielt-Status des offenen Blatts anpassen, Eingaben behalten.
@@ -138,28 +160,31 @@ function refreshUnlocked() {
 
 $('#sheet').players.addEventListener('input', (e) => { sheet.players = e.target.value; });
 
-$('#golden-card').addEventListener('change', (e) => {
-  campaign.goldenHeartCard = e.target.checked;
-  saveCampaign();
-});
-
 $('#sheet').addEventListener('submit', (e) => {
   e.preventDefault();
   if (validateScoresheet(sheet).length > 0) return;
   if (!confirm('Ist alles eingetragen?')) return;
 
-  const goldenGame = goldenHeartUnlock({
-    hasCard: campaign.goldenHeartCard,
-    unlockedInGame: campaign.unlocks.goldenesHerz ?? null,
-    roteHerzenPoints: sheet.bonuses.roteHerzen.unlocked ? sheet.bonuses.roteHerzen.points : 0,
-    gameNumber: sheet.gameNumber,
+  // Erfolgskarten werden am Partieende freigeschaltet, Wirkung ab der nächsten Partie.
+  const finished = sheet;
+  const { auto, confirm: toConfirm } = evaluateAchievements(finished, {
+    received: campaign.received,
+    unlockGames: campaign.unlocks,
   });
-  if (goldenGame !== null) campaign.unlocks.goldenesHerz = goldenGame;
+  const byId = Object.fromEntries(ACHIEVEMENTS.map((a) => [a.id, a]));
+  for (const id of auto) campaign.unlocks[id] = finished.gameNumber;
+  for (const id of toConfirm) {
+    if (confirm(`${byId[id].label}: ${byId[id].condition}. Erfüllt?`)) campaign.unlocks[id] = finished.gameNumber;
+  }
+  const unlockedNow = [...auto, ...toConfirm].filter((id) => campaign.unlocks[id] === finished.gameNumber);
 
-  campaign.sheets.push(sheet);
+  campaign.sheets.push(finished);
   saveCampaign();
   renderCampaign();
   newSheet();
+  $('#last-unlocks').textContent = unlockedNow.length
+    ? `Freigeschaltet in Spiel ${finished.gameNumber}: ${unlockedNow.map((id) => byId[id].label).join(', ')}`
+    : '';
 });
 
 $('#reset').addEventListener('click', () => {
@@ -168,6 +193,7 @@ $('#reset').addEventListener('click', () => {
   saveCampaign();
   renderCampaign();
   newSheet();
+  $('#last-unlocks').textContent = '';
 });
 
 renderCampaign();

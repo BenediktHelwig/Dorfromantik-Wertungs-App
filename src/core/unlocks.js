@@ -1,9 +1,9 @@
-// Freischaltungen ("Eure Erfolge") und ihre Wirkung auf das Wertungsblatt.
+// Wirkung von Freischaltungen ("Eure Erfolge") auf das Wertungsblatt.
 
 /**
- * Freigeschaltetes wirkt ab der Folgepartie: Ein Bonus ist im Wertungsblatt
- * von Spiel N aktiv, wenn seine Spielnummer kleiner als N ist.
- * (Für Goldenes Herz bestätigt, allgemein noch von Benedikt zu bestätigen.)
+ * Eine Erfolgskarte wird immer erst am Ende einer Partie freigeschaltet,
+ * die Wirkung gilt ab der nächsten Partie (bestätigt 22.11.2026).
+ * Ein Bonus ist also im Wertungsblatt von Spiel N aktiv, wenn seine Spielnummer kleiner als N ist.
  *
  * @param {Record<string, number|null|undefined>} unlockGames id -> Spielnummer der Freischaltung
  * @param {number} gameNumber Spielnummer des aktuellen Wertungsblatts
@@ -13,19 +13,4 @@ export function activeBonusIds(unlockGames, gameNumber) {
   return Object.entries(unlockGames)
     .filter(([, game]) => Number.isInteger(game) && game < gameNumber)
     .map(([id]) => id);
-}
-
-export const GOLDEN_HEART_THRESHOLD = 18;
-
-/**
- * Automatismus Goldenes Herz: Hat "Goldenes Herz" ein Kreuz (Karte erhalten),
- * noch keine Spielnummer, und stehen bei "Rote Herzen" mindestens 18 Punkte,
- * wird die aktuelle Spielnummer eingetragen. Danach ist der Effekt verbraucht.
- *
- * @param {{ hasCard: boolean, unlockedInGame: number|null, roteHerzenPoints: number, gameNumber: number }} p
- * @returns {number|null} einzutragende Spielnummer oder null
- */
-export function goldenHeartUnlock({ hasCard, unlockedInGame, roteHerzenPoints, gameNumber }) {
-  if (!hasCard || Number.isInteger(unlockedInGame)) return null;
-  return roteHerzenPoints >= GOLDEN_HEART_THRESHOLD ? gameNumber : null;
 }

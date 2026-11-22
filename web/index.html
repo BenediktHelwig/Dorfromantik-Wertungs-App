@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dorfromantik – Wertungsblatt (Prototyp)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Wertungsblatt <span id="game-number"></span></h1>
+    <p class="meta">Datum: <span id="game-date"></span> · Basisspiel · Prototyp</p>
+  </header>
+
+  <main>
+    <form id="sheet" novalidate>
+      <label class="players">Mitspielende <input name="players" type="text" autocomplete="off"></label>
+
+      <section>
+        <h2>Aufträge (B)</h2>
+        <div class="grid" id="orders"></div>
+        <p class="subtotal">S1 = <output id="s1">0</output></p>
+      </section>
+
+      <section>
+        <h2>Fahnen (C) und Längste (D)</h2>
+        <div class="grid" id="flags"></div>
+        <div class="grid" id="longest"></div>
+        <p class="subtotal">S2 = <output id="s2">0</output></p>
+      </section>
+
+      <section>
+        <h2>Freigespielt (E)</h2>
+        <div id="bonuses" class="bonuses"></div>
+        <p class="subtotal">S3 = <output id="s3">0</output></p>
+      </section>
+
+      <section class="result">
+        <p>Ergebnis H = <output id="total">0</output></p>
+        <p id="row-info"></p>
+        <ul id="errors" class="errors"></ul>
+        <button type="submit">Wertung speichern</button>
+      </section>
+    </form>
+
+    <aside>
+      <section>
+        <h2>Eure Ergebnisse</h2>
+        <p>Kreuze gesamt: <strong id="crosses">0</strong></p>
+        <table id="results"><thead><tr><th>Zeile</th><th>Titel</th><th>Kreuze</th><th>Spiele</th></tr></thead><tbody></tbody></table>
+      </section>
+
+      <section>
+        <h2>Eure Erfolge (Testdaten)</h2>
+        <p class="hint">Spielnummer der Freischaltung eintragen. Wirkt ab dem nächsten Spiel.</p>
+        <label class="inline"><input type="checkbox" id="golden-card"> Karte „Goldenes Herz“ erhalten</label>
+        <div id="unlocks" class="unlocks"></div>
+        <button type="button" id="reset">Demo-Kampagne zurücksetzen</button>
+      </section>
+    </aside>
+  </main>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

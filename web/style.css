@@ -1,0 +1,44 @@
+:root {
+  --bg: #f7f4ec;
+  --card: #ffffff;
+  --ink: #2d2a24;
+  --muted: #7a7366;
+  --accent: #4f7a3a;
+  --error: #b3261e;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+body { margin: 0; padding: 1rem; }
+header h1 { margin: 0; font-size: 1.4rem; }
+.meta, .hint { color: var(--muted); font-size: 0.9rem; margin: 0.25rem 0 1rem; }
+
+main { display: grid; gap: 1rem; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); }
+@media (max-width: 800px) { main { grid-template-columns: 1fr; } }
+
+section { background: var(--card); border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; }
+h2 { font-size: 1rem; margin: 0 0 0.5rem; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: 0.5rem; margin-bottom: 0.5rem; }
+label { display: flex; flex-direction: column; font-size: 0.85rem; gap: 0.2rem; }
+label.players { margin-bottom: 1rem; }
+label.inline { flex-direction: row; align-items: center; gap: 0.4rem; }
+input[type="number"], input[type="text"] { font-size: 1rem; padding: 0.35rem; border: 1px solid #ccc4b4; border-radius: 4px; }
+input:disabled { background: #eee9de; }
+
+.bonuses { display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); gap: 0.5rem; }
+.bonus { display: flex; align-items: flex-end; gap: 0.5rem; }
+.bonus label { flex: 1; }
+.bonus.locked { opacity: 0.55; }
+
+.subtotal { text-align: right; font-weight: 600; margin: 0; }
+.result p:first-child { font-size: 1.3rem; font-weight: 700; margin: 0; }
+.errors { color: var(--error); padding-left: 1.2rem; }
+
+button { font-size: 1rem; padding: 0.5rem 1rem; border: 0; border-radius: 6px; background: var(--accent); color: #fff; cursor: pointer; }
+button[type="button"] { background: var(--muted); margin-top: 0.75rem; }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+th, td { text-align: left; padding: 0.2rem 0.3rem; border-bottom: 1px solid #ece6d8; }
+.unlocks { display: grid; grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr)); gap: 0.4rem; margin-top: 0.5rem; }

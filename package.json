@@ -1,0 +1,14 @@
+{
+  "name": "dorfromantik-wertung",
+  "version": "0.1.0",
+  "description": "Wertung und Kampagnenverwaltung für das Brettspiel Dorfromantik (Prototyp)",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test",
+    "start": "node scripts/serve.js"
+  }
+}

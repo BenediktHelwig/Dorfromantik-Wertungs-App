@@ -7,11 +7,11 @@ import {
 } from '../src/core/scoresheet.js';
 import { highscoreRow } from '../src/core/highscore.js';
 import { activeBonusIds } from '../src/core/unlocks.js';
-import { ACHIEVEMENTS, evaluateAchievements } from '../src/core/achievements.js';
+import { ACHIEVEMENTS, evaluateAchievements, receivedAchievements, availableHearts } from '../src/core/achievements.js';
 import { campaignResults, nextGameNumber } from '../src/core/campaign.js';
 
 const STORAGE_KEY = 'dorfromantik-demo-kampagne';
-const emptyCampaign = () => ({ sheets: [], unlocks: {}, received: [] });
+const emptyCampaign = () => ({ sheets: [], unlocks: {}, received: [], boardHearts: [null, null, null] });
 
 function loadCampaign() {
   try {
@@ -35,6 +35,12 @@ let sheet;
 
 const $ = (sel) => document.querySelector(sel);
 const today = () => new Date().toISOString().slice(0, 10);
+const currentHearts = () => availableHearts({
+  unlockGames: campaign.unlocks,
+  boardHeartGames: campaign.boardHearts,
+  gameNumber: sheet.gameNumber,
+});
+const validate = () => validateScoresheet(sheet, { hearts: currentHearts() });
 
 function numberField(label, value, onInput, disabled = false) {
   const wrapper = document.createElement('label');
@@ -96,7 +102,7 @@ function update() {
   $('#s2').value = s2;
   $('#s3').value = s3;
   $('#total').value = total;
-  const errors = validateScoresheet(sheet);
+  const errors = validate();
   $('#errors').replaceChildren(...errors.map((e) => Object.assign(document.createElement('li'), { textContent: e })));
   if (errors.length === 0) {
     const row = highscoreRow(total);
@@ -106,13 +112,24 @@ function update() {
   }
 }
 
+// Kreuz "Karte erhalten": für Schachtel 4/5 abgeleitet (öffnende Karte erfüllt), sonst vom Spieler.
+function setReceivedCheck(check) {
+  const { id } = check.dataset;
+  const derived = receivedAchievements([], campaign.unlocks, nextGameNumber(campaign.sheets)).has(id);
+  check.checked = derived || campaign.received.includes(id);
+  check.disabled = derived;
+  check.title = derived ? 'Karte erhalten (Schachtel geöffnet)' : 'Karte erhalten';
+}
+
 function unlockRow(id, label, { receivable = false, title = '' } = {}) {
   const row = document.createElement('div');
   row.className = 'unlock';
   row.title = title;
   if (receivable) {
     const check = document.createElement('input');
-    Object.assign(check, { type: 'checkbox', checked: campaign.received.includes(id), title: 'Karte erhalten' });
+    check.type = 'checkbox';
+    check.dataset.id = id;
+    setReceivedCheck(check);
     check.addEventListener('change', () => {
       campaign.received = check.checked
         ? [...new Set([...campaign.received, id])]
@@ -125,7 +142,10 @@ function unlockRow(id, label, { receivable = false, title = '' } = {}) {
     campaign.unlocks[id] = v > 0 ? v : null;
     saveCampaign();
   });
-  field.querySelector('input').addEventListener('change', refreshUnlocked);
+  field.querySelector('input').addEventListener('change', () => {
+    refreshUnlocked();
+    document.querySelectorAll('#unlocks-boxes input[type=checkbox]').forEach(setReceivedCheck);
+  });
   row.append(field);
   return row;
 }
@@ -146,6 +166,13 @@ function renderCampaign() {
   const achievementIds = new Set(ACHIEVEMENTS.map((a) => a.id));
   $('#unlocks-board').replaceChildren(...BONUSES.filter((b) => !achievementIds.has(b.id)).map((b) =>
     unlockRow(b.id, b.label)));
+  $('#unlocks-hearts').replaceChildren(...campaign.boardHearts.map((game, i) => {
+    const field = numberField(`Herz-Kreis ${i + 1}`, game ?? '', (v) => {
+      campaign.boardHearts[i] = v > 0 ? v : null;
+      saveCampaign();
+    });
+    return field;
+  }));
 }
 
 // Testdaten geändert: Freigespielt-Status des offenen Blatts anpassen, Eingaben behalten.
@@ -162,7 +189,7 @@ $('#sheet').players.addEventListener('input', (e) => { sheet.players = e.target.
 
 $('#sheet').addEventListener('submit', (e) => {
   e.preventDefault();
-  if (validateScoresheet(sheet).length > 0) return;
+  if (validate().length > 0) return;
   if (!confirm('Ist alles eingetragen?')) return;
 
   // Erfolgskarten werden am Partieende freigeschaltet, Wirkung ab der nächsten Partie.

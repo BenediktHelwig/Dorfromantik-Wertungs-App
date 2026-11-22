@@ -76,9 +76,11 @@ const isCount = (v) => Number.isInteger(v) && v >= 0;
 
 /**
  * Prüft ein Wertungsblatt. Gibt eine Liste von Fehlermeldungen zurück (leer = gültig).
+ * @param {object} sheet
+ * @param {{ hearts?: number }} [context] hearts = verfügbare rote Herzen (max. 6 P je Herz)
  * @returns {string[]}
  */
-export function validateScoresheet(sheet) {
+export function validateScoresheet(sheet, { hearts } = {}) {
   const errors = [];
   const check = (value, label) => {
     if (!isCount(value)) errors.push(`${label}: ganze Zahl ≥ 0 erwartet`);
@@ -93,5 +95,9 @@ export function validateScoresheet(sheet) {
       errors.push(`${label}: noch nicht freigespielt, Punkte müssen 0 sein`);
     }
   });
+  const roteHerzen = sheet.bonuses.roteHerzen;
+  if (Number.isInteger(hearts) && roteHerzen.unlocked && roteHerzen.points > hearts * 6) {
+    errors.push(`Rote Herzen: höchstens ${hearts * 6} P (${hearts} Herz${hearts === 1 ? '' : 'en'} × 6)`);
+  }
   return errors;
 }

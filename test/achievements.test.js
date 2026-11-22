@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { createScoresheet } from '../src/core/scoresheet.js';
-import { ACHIEVEMENTS, evaluateAchievements } from '../src/core/achievements.js';
+import { ACHIEVEMENTS, evaluateAchievements, receivedAchievements, availableHearts } from '../src/core/achievements.js';
 
 const ALL = ACHIEVEMENTS.map((a) => a.id);
 const sheet = (setup = {}) => {
@@ -55,10 +55,34 @@ test('Goldenes Herz: ≥18 P mit roten Herzen, nur wenn Rote Herzen freigespielt
   assert.ok(!evaluate(sheet({ bonuses: { roteHerzen: 18 } })).auto.includes('goldenesHerz'));
 });
 
-test('Herzenswünsche wird nur vorgeschlagen (Spieler bestätigt)', () => {
-  const result = evaluate(sheet({ unlocked: ['roteHerzen'], bonuses: { roteHerzen: 6 } }));
-  assert.deepEqual(result.confirm, ['herzenswuensche']);
-  assert.ok(!result.auto.includes('herzenswuensche'));
+test('Herzenswünsche: 6 P mit dem einen Herz', () => {
+  assert.ok(evaluate(sheet({ unlocked: ['roteHerzen'], bonuses: { roteHerzen: 6 } })).auto.includes('herzenswuensche'));
+  assert.ok(!evaluate(sheet({ unlocked: ['roteHerzen'], bonuses: { roteHerzen: 5 } })).auto.includes('herzenswuensche'));
+});
+
+test('Herzenswünsche öffnet Schachtel 4, Auf Erfolgsspur Schachtel 5 – ab der nächsten Partie', () => {
+  const box4 = ['erntefest', 'lokomotive', 'schiff', 'wachturm', 'waldhuette'];
+  const box5 = ['bahnhof', 'ballonStartplatz', 'baustelle', 'fahnenfest', 'goldenesHerz', 'hafen'];
+  assert.deepEqual([...receivedAchievements([], { herzenswuensche: 3 }, 3)], []);
+  assert.deepEqual([...receivedAchievements([], { herzenswuensche: 3 }, 4)].sort(), box4.sort());
+  assert.deepEqual([...receivedAchievements([], { aufErfolgsspur: 2 }, 5)].sort(), box5.sort());
+});
+
+test('Karten aus Schachtel 4 werden ohne manuelles Kreuz geprüft, wenn Herzenswünsche erfüllt ist', () => {
+  const s = sheet({ orders: { getreide: 30 } }); // Spiel 5
+  assert.deepEqual(evaluate(s, [], { herzenswuensche: 4 }).auto, ['erntefest']);
+  assert.deepEqual(evaluate(s, [], { herzenswuensche: 5 }).auto, []);
+});
+
+test('verfügbare rote Herzen', () => {
+  const base = { roteHerzen: 1 };
+  assert.equal(availableHearts({ unlockGames: {}, gameNumber: 5 }), 0);
+  assert.equal(availableHearts({ unlockGames: { roteHerzen: 5 }, gameNumber: 5 }), 0);
+  assert.equal(availableHearts({ unlockGames: base, gameNumber: 2 }), 1);
+  // Herz-Kreise zählen erst, wenn Herzenswünsche erfüllt ist
+  assert.equal(availableHearts({ unlockGames: base, boardHeartGames: [3], gameNumber: 6 }), 1);
+  assert.equal(availableHearts({ unlockGames: { ...base, herzenswuensche: 4 }, boardHeartGames: [3, 6, null], gameNumber: 6 }), 2);
+  assert.equal(availableHearts({ unlockGames: { ...base, herzenswuensche: 4 }, boardHeartGames: [3, 6, 7], gameNumber: 9 }), 4);
 });
 
 test('Fahnenfest ist manuell und wird nie automatisch gesetzt', () => {

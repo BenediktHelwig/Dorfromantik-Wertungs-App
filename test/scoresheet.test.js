@@ -44,3 +44,11 @@ test('meldet negative, gebrochene und gesperrte Werte', () => {
   assert.match(errors.join('\n'), /Fahnen Dorf/);
   assert.match(errors.join('\n'), /Hafen: noch nicht freigespielt/);
 });
+
+test('Rote Herzen: höchstens 6 P je verfügbarem Herz', () => {
+  const sheet = createScoresheet({ gameNumber: 4, date: '2026-11-22', unlockedBonusIds: ['roteHerzen'] });
+  sheet.bonuses.roteHerzen.points = 7;
+  assert.match(validateScoresheet(sheet, { hearts: 1 }).join(), /höchstens 6 P/);
+  assert.deepEqual(validateScoresheet(sheet, { hearts: 2 }), []);
+  assert.deepEqual(validateScoresheet(sheet), []); // ohne Angabe keine Prüfung
+});

@@ -26,12 +26,12 @@ Zusätzlich drei Zeilen ohne Titel: 500, 600, 700 mit je 15 Kreuzen (fest, gleic
 - Jede Karte wird nur einmal erfüllt. Ist die Spielnummer gesetzt, prüft die App sie nicht mehr.
 
 ### Erfolgskarten aus den Schachteln
-Quelle: `Basisspiel_Freischaltregeln.md`. Bedingung = in einer Partie erreichen. Erfüllung: **auto** = App prüft das Wertungsblatt und trägt die Spielnummer ein, **bestätigen** = App erkennt eine wahrscheinliche Erfüllung und fragt nach, **manuell** = Spieler bestätigt selbst, **KB** = über das Kampagnenblatt.
+Quelle: `Basisspiel_Freischaltregeln.md`. Bedingung = in einer Partie erreichen. Erfüllung: **auto** = App prüft das Wertungsblatt und trägt die Spielnummer ein, **manuell** = Spieler bestätigt selbst, **KB** = über das Kampagnenblatt. (Der Code kennt zusätzlich „bestätigen“ = App schlägt vor, Spieler bestätigt; derzeit nutzt das keine Karte.)
 
 | Schachtel | Karte | Bedingung | Erfüllung | Prüfung in der App |
 |---|---|---|---|---|
 | 1 | Rote Herzen | „Erfolg freigespielt“, kommt mit Schachtel 1 | KB | Schachtel 1 geöffnet |
-| 1 | Herzenswünsche | am Partieende 6 P durch 1 Herz | bestätigen | E Rote Herzen ≥ 6 |
+| 1 | Herzenswünsche | am Partieende 6 P durch 1 Herz | auto | E Rote Herzen ≥ 6 (solange Herzenswünsche offen ist, gibt es nur 1 Herz) |
 | 2 | Auf Erfolgsspur | ≥ 200 P | auto | H ≥ 200 |
 | 4 | Erntefest | ≥ 30 P durch Getreideaufträge | auto | B2 ≥ 30 |
 | 4 | Lokomotive | ≥ 30 P durch Gleisaufträge | auto | B4 ≥ 30 |
@@ -47,11 +47,16 @@ Quelle: `Basisspiel_Freischaltregeln.md`. Bedingung = in einer Partie erreichen.
 
 Weitere Inhalte: Schachtel 1 bringt 5 Auftragsplättchen, 5 4er-Marker und 1 rotes Holzherz. Schachtel 2 bringt 5 Landschaftsplättchen. Schachtel 3 enthält die 12 Erfolgskarten des Kampagnenblatts (je einzeln über das KB), 8 Sonderplättchen, 3 7er-Aufträge und 3 rote Herzen (erst über das KB freigeschaltet). Schachtel 4 bringt 5 Sonderplättchen, Schachtel 5 bringt 5 Sonderplättchen, 1 Ballonplättchen und 1 goldenes Holzherz.
 
-Rote Herzen: Pro Herz höchstens 6 P (1 Herz aus Schachtel 1, 3 weitere über das KB).
+### Schachteln öffnen (bestätigt 22.11.2026)
+- Schachtel 1 und 2 öffnen sich über das Kampagnenblatt.
+- **Herzenswünsche** erfüllt → Schachtel 4 wird geöffnet. **Auf Erfolgsspur** erfüllt → Schachtel 5 wird geöffnet. (Annahme: in der Antwort stand zweimal Herzenswünsche, gemeint ist für Schachtel 5 Auf Erfolgsspur.)
+- Die Karten der geöffneten Schachtel bekommen ihr Kreuz automatisch. Geöffnet wird am Partieende, die Karten gelten ab der nächsten Partie.
+- Erfolgskarten, die über das KB freigeschaltet werden, holt man am Partieende aus Schachtel 3, sie gelten ab der nächsten Partie.
 
-### Offene Fragen
-- Bringt Herzenswünsche selbst ein weiteres Herz, und hängen die 3 Herzen vom KB davon ab? Davon hängt die Prüfung „Rote Herzen ≤ 6 P je Herz“ ab (noch nicht umgesetzt).
-- Wann bekommen die Karten der Schachteln 4 und 5 ihr Kreuz, also wann werden diese Schachteln geöffnet (z. B. durch Auf Erfolgsspur)? Bis dahin setzt der Spieler das Kreuz selbst.
+### Rote Herzen (bestätigt 22.11.2026)
+- Mit Schachtel 1 erhält man das erste von 4 roten Herzen, nutzbar ab der nächsten Partie.
+- Erreicht man mit diesem Herz 6 P (Herzenswünsche erfüllt), kommen 3 weitere Herzen zum Material. Jedes davon muss über seinen Herz-Kreis im KB freigeschaltet (ausgekreuzt) werden, nutzbar ab der Partie danach.
+- Pro Herz höchstens 6 P. Die App prüft „Rote Herzen ≤ 6 × verfügbare Herzen“.
 
 ## Korrektur
-Gespeicherte Wertungsblätter dürfen geändert werden. Alles Abgeleitete (Zeile in „Eure Ergebnisse“, Kreuze, automatische Freischaltungen) wird neu berechnet.
+Gespeicherte Wertungsblätter dürfen geändert werden. Alles Abgeleitete (Zeile in „Eure Ergebnisse“, Kreuze, automatische Freischaltungen, geöffnete Schachteln, verfügbare Herzen) wird neu berechnet.

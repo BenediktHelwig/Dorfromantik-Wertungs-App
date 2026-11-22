@@ -49,8 +49,9 @@ Weitere Inhalte: Schachtel 1 bringt 5 Auftragsplättchen, 5 4er-Marker und 1 rot
 
 ### Schachteln öffnen (bestätigt 22.11.2026)
 - Schachtel 1 und 2 öffnen sich über das Kampagnenblatt.
-- **Herzenswünsche** erfüllt → Schachtel 4 wird geöffnet. **Auf Erfolgsspur** erfüllt → Schachtel 5 wird geöffnet. (Annahme: in der Antwort stand zweimal Herzenswünsche, gemeint ist für Schachtel 5 Auf Erfolgsspur.)
-- Die Karten der geöffneten Schachtel bekommen ihr Kreuz automatisch. Geöffnet wird am Partieende, die Karten gelten ab der nächsten Partie.
+- **Herzenswünsche** erfüllt → Schachtel 4 wird geöffnet. **Auf Erfolgsspur** erfüllt → Schachtel 5 wird geöffnet.
+- Die Karten der geöffneten Schachtel bekommen unter „Eure Erfolge“ > „Schachteln“ automatisch ihr **Kreuz** (Karte erhalten). Geöffnet wird am Partieende, die Karten sind ab der nächsten Partie im Spiel.
+- **Freigeschaltet** ist eine Karte damit noch nicht: Die Spielnummer kommt erst, wenn ihre Bedingung in einer Partie erfüllt ist. Erst danach (ab der Folgepartie) wirkt ihr Bonus.
 - Erfolgskarten, die über das KB freigeschaltet werden, holt man am Partieende aus Schachtel 3, sie gelten ab der nächsten Partie.
 
 ### Rote Herzen (bestätigt 22.11.2026)

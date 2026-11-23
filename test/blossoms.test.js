@@ -103,11 +103,11 @@ test('Meisterprüfung: Gesamtsumme ≥250, der Spieler bestätigt, 10 Blüten we
 
 test('Meisterprüfung mit Auffüllen: fehlende Punkte plus 10 Blüten', () => {
   const r = evaluate({
-    blossoms: 15, set: (s) => { s.orders.kirschbaum = 230; }, received: ['meisterpruefung'],
+    blossoms: 30, set: (s) => { s.orders.kirschbaum = 210; }, received: ['meisterpruefung'],
     entry: { confirmed: ['meisterpruefung'], fills: ['meisterpruefung'] },
   });
   assert.deepEqual(r.fulfilled, ['meisterpruefung']);
-  assert.equal(r.spent, 25);
+  assert.equal(r.spent, 20); // Gesamtsumme 240 (Blüten zählen als Punkte): 10 fehlen, dazu 10 für die Prüfung
 });
 
 test('Teil-auto (Ochsenkarren, Schiff): der Zahlenteil allein genügt nicht, der Spieler muss bestätigen', () => {

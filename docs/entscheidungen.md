@@ -78,3 +78,63 @@ Diese Punkte füllen Lücken im Text. Weichen sie von deinem Spiel ab, bitte mel
   im Fortschrittsbaum eine Frage offen ist (erst beantworten). Danach nur ansehen und löschen. Löschen ist bei
   laufenden und beendeten Kampagnen möglich, immer mit Sicherheitsabfrage.
 - **Grund:** Antwort von Benedikt; die Sperre bei offener Frage ist die empfohlene Auslegung.
+
+## 23.11.2026 – Variante Sakura (Schritt 3)
+
+### 1. Highscoreliste Sakura
+- **Regel:** Wie lautet die vollständige Highscoreliste Sakura?
+- **Entscheidung:** Vom Foto des Kampagnenbogens (Punkte → Titel → Kreuze): 0–100 Lastenträger 1 · 110 Rikschafahrer 2 ·
+  120 Puppenspielerin 2 · 130 Bambusflößer 3 · 140 Rettichhändler 3 · 150 Flötenspielerin 4 · 160 Tofuverkäuferin 4 ·
+  170 Feuerwerkerin 5 · 180 Lastkahnkapitän 5 · 190 Zubermacher 6 · 200 Tatamiflechterin 6 · 210 Glockengießer 7 ·
+  220 Origami-Künstlerin 7 · 230 Maskenschnitzerin 8 · 240 Tuschemalerin 8 · 250 Waffenschmied 9 · 260 Salzsieder 9 ·
+  270 Seidenweberin 10 · 280 Perlentaucher 10 · 290 Algenzüchterin 11 · 300 Teebäuerin 11 · 310 Architektin 11 ·
+  320 Wandermönch 12 · 330 Harfenspielerin 12 · 340 Provinzbeamtin 12 · 350 Tempeldiener 13 · 360 Ronin 13 · 370 Geisha 13 ·
+  380 Samurai 14 · 390 Präfektin 14 · 400 Priester 14 · 410 Shogun 15 · 420 Prinz 15 · 430 Prinzessin 15 · 440 Kaiserin 16 ·
+  450 Kaiser 16 · 460, 470, 480, 490, 500 ohne Titel je 16. Abrunden wie im Basisspiel, ab 500 bleibt es in Zeile 500.
+- **Grund:** Die Docs nannten nur Anfang und Ende der Liste.
+
+### 2. Boxen 4 bis 6
+- **Regel:** Wie kommen die Karten der Boxen 4 bis 6 ins Spiel?
+- **Entscheidung:** Box 4 ist nur Aufbewahrung, ihr Inhalt wird über den Bogen freigeschaltet. Mit der Freischaltung von
+  „Heiße Quellen“ erhält man „Badende Affen“. Ist die Meisterprüfung erfüllt, wird Box 5 geöffnet (Dekret des Kaisers,
+  Dorf & Reis, Kirschbaum & Dorf, Reis & Kirschbaum). Ist „Badende Affen“ erfüllt, wird Box 6 geöffnet (Bunte Fahne, Daimyo,
+  Kleine Wolken, Ochsenkarren und Handelsposten, Poet, Schiff und Anlegestelle).
+- **Grund:** Antwort von Benedikt.
+
+### 3. Zeitregel wie im Basisspiel
+- **Entscheidung:** Alles, was in Partie N ausgekreuzt, erhalten oder erfüllt wird, wirkt ab Partie N+1: Bonusfeld aktiv,
+  Aufgabe prüfbar, Blüten sammelbar, Spalten offen.
+
+### 4. Kalligraph
+- **Regel:** Wie viele Felder bringt der Kalligraph?
+- **Entscheidung:** Kartentext: Ist der Kalligraph am Spielende komplett von Plättchen umgeben, darf 1 zusätzliches Feld
+  (kein Blütenfeld) ausgekreuzt werden, dazu je 10 abgegebene Blüten 1 weiteres Feld (20 Blüten = 3 Kreuze). Alle Felder
+  liegen auf dem Kreispfad, alles ist freiwillig. Das ersetzt die Fassung „10 Blüten → 1 Kreuz auf dem Blütenpfad“ in
+  `freischaltregeln-sakura.md`.
+- **Grund:** Benedikt hat den Kartentext nachgeliefert und seine frühere Annahme korrigiert.
+
+### 5. Blüten füllen Punkte auf
+- **Entscheidung:** Für jede Karte mit Punktewert zum Freischalten gilt 1 Blüte = 1 Punkt. Bei Karten ohne Auto-Prüfung
+  und bei Sonderplättchen gibt der Spieler einen freien Blütenbetrag aus.
+
+### 6. Pfadende
+- **Entscheidung:** Kreis- und Blütenpfad sind linear und enden jeweils vor Stern 30. Stern 30 wird nur ausgekreuzt, wenn
+  30 Blüten auf einmal bezahlt werden. Ist der Kreispfad bis vor Stern 30 ausgekreuzt, kommen Kreuze der Partie in die noch
+  offenen Kreise, um noch nicht Freigeschaltetes freizuschalten. Der Blütenpfad hat Gabelung an der Moossammlerin (Graph
+  bestätigt). Blüten nach dem Pfadende gehen nur noch in Punkte oder in Stern 30.
+- **Grund:** Antwort von Benedikt.
+
+### 7. Benannte Felder auf dem Blütenpfad
+- **Entscheidung:** Sie kosten je 1 Blüte und schalten erst frei, wenn sie selbst ausgekreuzt sind.
+
+### 8. Restliche Felder ohne Verfall
+- **Entscheidung:** Wie im Basisspiel (Entscheidung Schritt 1): Der Spieler wählt, die App kreuzt weiter, gefragt wird nur
+  bei mindestens zwei Möglichkeiten. Kreuze verfallen nur, wenn alle Felder ausgekreuzt sind, es gibt kein „Verfallen lassen“.
+
+### 9. *-Karten (Geschenk, Reiskuchen, Umtrunk)
+- **Entscheidung:** In Partie N eingesetzt, ist die Karte verbraucht. Umdrehen kostet 5 Blüten und ist erst im Blüten-Dialog
+  einer späteren Partie möglich (nicht in der Partie des Einsatzes). Danach ist sie ab der Folgepartie wieder einsetzbar.
+
+### 10. Spalten Rundum und 7er-Aufträge
+- **Entscheidung:** Rundum ist ab der Partie nach „Öffnet Box 1“ offen, die 7er-Aufträge ab der Partie nach dem Öffnen
+  von Box 5. Vorher müssen die Felder 0 sein.

@@ -143,10 +143,8 @@ Diese Punkte füllen Lücken im Text. Weichen sie von deinem Spiel ab, bitte mel
 - **Zählung der Felder:** `fortschrittsbaum-sakura.md` nennt 123 Felder auf dem Kreispfad. Gemessen am Graphen sind es
   116 (97 Kreise, 8 Sechsecke, 3 Boxen, 4 Karten, 4 „+1“-Quadrate); die übrigen Sechsecke und Quadrate der 123 liegen
   auf dem Blütenpfad (94 Felder: 87 Sterne und 7 benannte). Die Tests gehen vom Graphen aus.
-- **Blütenpfad nach dem Ende:** Entscheidung 6 gilt wörtlich: Es gibt keine „Restlichen Felder“, überschüssige
-  Blüten gehen nur noch in Punkte oder Stern 30. (Auf dem Kreispfad gilt Entscheidung 8.)
-- **Restliche Felder, eine Möglichkeit:** Gibt es genau ein freies Feld neben einem ausgekreuzten Feld, kreuzt die App
-  ohne Frage weiter (Entscheidung 8, „Gefragt wird nur bei mindestens zwei Möglichkeiten“).
+- **Restliche Felder, eine Möglichkeit:** Gibt es genau einen offenen Zweig (Eingang), kreuzt die App ohne Frage
+  weiter (Entscheidung 8, „Gefragt wird nur bei mindestens zwei Möglichkeiten“).
 - **Einsetzen einer Gabelung:** Die Frage nach dem Zweig kommt erst bei Bedarf (wie im Basisspiel).
 - **Meisterprüfung und „teil-auto“-Karten:** Bestätigen die Meisterprüfung kostet 10 Blüten zusätzlich zu fehlenden
   Punkten. Ochsenkarren und Schiff brauchen nur das Bestätigen des Spielers (Straße/Fluss ≥12 Plättchen).
@@ -154,4 +152,24 @@ Diese Punkte füllen Lücken im Text. Weichen sie von deinem Spiel ab, bitte mel
 - **Namen der Karten:** auf dem Bogen „Kleine Wolken“ und „Schiff und Anlegestelle“; die Docs schreiben „Kleine Wolke“
   und „Schiff und Angelstelle“. Die App folgt dem Bogen.
 - **Partieende-Eintrag:** Er wird direkt nach dem Speichern des Blatts eingetragen (Kalligraph, Blüten, Bestätigungen)
-  und danach nicht mehr geändert (wie das Wertungsblatt selbst, Entscheidung Schritt 2).
+  und danach nicht mehr geändert (wie das Wertungsblatt selbst, Entscheidung Schritt 2). Er ist freiwillig: Ohne
+  Eintrag wird nichts ausgegeben. Öffnet man die Kampagne, bevor er gespeichert ist, fragt die Oberfläche erneut;
+  „Nichts eintragen“ speichert einen leeren Eintrag.
+- **Blütensammler:** Solange die Wahl offen ist, sollte kein weiteres Blatt gespeichert werden; die Oberfläche sperrt
+  das Speichern.
+
+### 11. Restliche Felder nur in Laufrichtung
+- **Regel:** Wie werden die Restlichen Felder auf dem Kreispfad gefüllt (Gabelungen an Box 2 und Heiße Quellen)?
+- **Entscheidung:** Nach einer Gabelung muss ein Zweig gewählt werden, die Zweige kommen wieder zusammen (Box 3,
+  Kontor), dann geht es zuerst Richtung Stern 30 weiter. Ist das Pfadende erreicht, darf der noch offene Zweig
+  ausgekreuzt werden, aber nur von der Gabelung (z. B. Heiße Quellen) in Richtung Zusammenführung (Kontor), nie von
+  der Zusammenführung her. Dadurch spielt die Reihenfolge der „+1“-Felder keine Rolle.
+- **Grund:** Antwort von Benedikt auf die Frage zu den „+1“-Quadraten.
+
+### 12. Blütenpfad: Restliche Felder wie auf dem Kreispfad
+- **Regel:** Was geschieht mit Einzelblüten, wenn der gewählte Weg des Blütenpfads vor Stern 30 ausgekreuzt ist?
+- **Entscheidung:** Sie dürfen in den nicht gewählten Zweig (Gabelung an der Moossammlerin), ebenfalls nur in
+  Laufrichtung, bis alle 94 Felder ausgekreuzt sind; danach verfallen Blüten. Das ersetzt den Satz in Entscheidung 6,
+  Blüten nach dem Ende gingen nur noch in Punkte oder Stern 30. Stern 30 bleibt nur mit 30 Blüten auf einmal und
+  erst nach dem gewählten Weg möglich.
+- **Grund:** Antwort von Benedikt; sonst blieben Sumoringer und Reiskuchen bzw. Reisbäuerin und Umtrunk unerreichbar.

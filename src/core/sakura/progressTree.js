@@ -9,10 +9,11 @@
 //  - Laufrichtung = wachsender Abstand von der Wurzel. An einer Gabelung wählt der Spieler das erste Feld
 //    des Zweigs (Entscheidung), Zusammenführungen laufen automatisch weiter.
 //  - Die Frage kommt erst bei Bedarf: enden die Kreuze genau am Sechseck, fragt die App erst in der Folgepartie.
-//  - Pfadende = letztes Feld vor Stern 30 ausgekreuzt. Danach "Restliche Felder" (nur Kreispfad): Der Spieler
-//    wählt ein freies Feld neben einem ausgekreuzten, die App kreuzt in diese Richtung weiter. Bei genau einer
-//    Möglichkeit geht es ohne Frage weiter. Kreuze verfallen erst, wenn alle Felder ausgekreuzt sind.
-//  - Auf dem Blütenpfad gibt es nach dem Ende keine Restfelder: Überschüssige Blüten verfallen.
+//  - Pfadende = letztes Feld vor Stern 30 ausgekreuzt. Danach "Restliche Felder" (beide Spuren, Entscheidung 11
+//    und 12): Der Spieler wählt einen noch offenen Zweig, die App kreuzt ihn in Laufrichtung bis zur
+//    Zusammenführung. Eingang ist nur das erste Feld nach der Gabelung, nie von der Zusammenführung her.
+//    Bei genau einer Möglichkeit geht es ohne Frage weiter. Kreuze verfallen erst, wenn alle Felder
+//    ausgekreuzt sind.
 //
 // Gespeichert werden nur die Entscheidungen des Spielers; alles andere rechnet walkTrack neu.
 
@@ -75,7 +76,7 @@ export function trackInfo(graph, track) {
  *   expired: number, ended: boolean, allCrossed: boolean }}
  */
 export function walkTrack({ graph = SAKURA_GRAPH, track, games, decisions = [] }) {
-  const { root, fields, forward, adjacent } = trackInfo(graph, track);
+  const { root, fields, forward } = trackInfo(graph, track);
   const isField = new Set(fields);
   const total = fields.length;
 
@@ -87,13 +88,17 @@ export function walkTrack({ graph = SAKURA_GRAPH, track, games, decisions = [] }
   let pending = null;
   let used = 0; // verbrauchte Entscheidungen
 
-  const freeNeighbors = (node) => (adjacent.get(node) ?? []).filter((n) => isField.has(n) && !crossed.has(n));
-  const frontier = () => fields
-    .filter((f) => !crossed.has(f))
-    .map((f) => ({ toward: f, at: [...(adjacent.get(f) ?? [])].filter((n) => crossed.has(n)).sort()[0] }))
-    .filter((o) => o.at !== undefined);
+  // Restliche Felder laufen nur in Laufrichtung: freie Folgefelder des Cursors bzw. eines ausgekreuzten Feldes.
+  const freeAhead = (node) => (forward.get(node) ?? []).filter((n) => !crossed.has(n));
+  const frontier = () => {
+    const options = new Map();
+    for (const node of [root, ...crossed.keys()]) {
+      for (const toward of freeAhead(node)) if (!options.has(toward) || node < options.get(toward).at) options.set(toward, { at: node, toward });
+    }
+    return [...options.values()].sort((a, b) => a.toward.localeCompare(b.toward));
+  };
   const matches = (d, options) => d && !d.skip && options.some((o) => o.toward === d.toward
-    && (o.at === d.at || (adjacent.get(o.toward) ?? []).includes(d.at)));
+    && (o.at === d.at || (forward.get(d.at) ?? []).includes(o.toward)));
   const ask = (kind, gameNumber, left, options) => {
     pending = { kind, track, gameNumber, at: cursor, remaining: left, options };
     if (decisions[used]) pending.rejected = decisions[used];
@@ -118,7 +123,6 @@ export function walkTrack({ graph = SAKURA_GRAPH, track, games, decisions = [] }
         const options = forward.get(cursor);
         if (options.length === 0) {
           leftover = true;
-          if (track === 'star') { expired += left; break; } // Blütenpfad: nach dem Ende gibt es keine Restfelder
         } else if (options.length === 1) {
           step(options[0]);
         } else {
@@ -134,10 +138,8 @@ export function walkTrack({ graph = SAKURA_GRAPH, track, games, decisions = [] }
         continue;
       }
 
-      if (track === 'star') { expired += left; break; }
-
       // Restliche Felder: erst dem freien Abschnitt weiter folgen, sonst ein freies Feld neben einem ausgekreuzten wählen.
-      const next = chain ? freeNeighbors(cursor) : [];
+      const next = chain ? freeAhead(cursor) : [];
       let options = next.map((toward) => ({ at: cursor, toward }));
       if (options.length === 0) {
         chain = false;

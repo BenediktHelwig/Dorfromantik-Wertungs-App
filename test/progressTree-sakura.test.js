@@ -35,6 +35,19 @@ function probe({ x = 2, y = 2 } = {}) {
   return { nodes, edges };
 }
 
+/**
+ * Zwei Gabelungen hintereinander: S – a – F1 ⟨x1 | y1⟩ J1 – b – F2 ⟨u1 | v1⟩ J2 – z – E.
+ * Gewählt wird x1 und u1; y1 und v1 bleiben offen (zwei Restfeld-Zweige).
+ */
+function twoForks() {
+  const nodes = ['S', 'a', 'F1', 'x1', 'y1', 'J1', 'b', 'F2', 'u1', 'v1', 'J2', 'z', 'E']
+    .map((id) => ({ id, type: id === 'S' ? 'start' : id === 'E' ? 'bigstar' : 'circle' }));
+  const pairs = [['S', 'a'], ['a', 'F1'], ['F1', 'x1'], ['F1', 'y1'], ['x1', 'J1'], ['y1', 'J1'], ['J1', 'b'], ['b', 'F2'],
+    ['F2', 'u1'], ['F2', 'v1'], ['u1', 'J2'], ['v1', 'J2'], ['J2', 'z'], ['z', 'E']];
+  return { nodes, edges: pairs.map(([a, b]) => ({ a, b, track: 'path' })) };
+}
+const viaXU = [{ at: 'F1', toward: 'x1' }, { at: 'F2', toward: 'u1' }];
+
 const walk = (graph, games, decisions = [], track = 'path') => walkTrack({ graph, track, games, decisions });
 const one = (crosses, gameNumber = 1) => [{ gameNumber, crosses }];
 const keys = (r) => [...r.crossed.keys()].sort();
@@ -78,11 +91,29 @@ test('Das Ende des Pfads ist erst nach dem letzten Feld erreicht', () => {
   assert.equal(walk(probe(), one(5), viaX).ended, false);
 });
 
-test('Nach dem Pfadende fragt die App („Restliche Felder“), wenn es mindestens zwei Möglichkeiten gibt', () => {
-  const r = walk(probe(), one(7), viaX);
+test('Nach dem Pfadende fragt die App („Restliche Felder“), wenn es mindestens zwei offene Zweige gibt', () => {
+  const r = walk(twoForks(), one(10), viaXU);
+  assert.equal(r.ended, true);
   assert.equal(r.pending.kind, 'leftover');
   assert.equal(r.pending.remaining, 1);
-  assert.deepEqual(r.pending.options.map((o) => o.toward).sort(), ['y1', 'y2']);
+  assert.deepEqual(r.pending.options.map((o) => o.toward).sort(), ['v1', 'y1']);
+});
+
+test('Restliche Felder laufen nur in Laufrichtung: Eingang ist das erste Feld nach der Gabelung, nie von der Zusammenführung her', () => {
+  const r = walk(twoForks(), one(10), viaXU);
+  assert.deepEqual(r.pending.options.map((o) => [o.at, o.toward]).sort(), [['F1', 'y1'], ['F2', 'v1']]);
+  const single = walk(probe(), one(8), viaX); // ein offener Zweig: y1 wird ohne Frage genommen, y2 folgt in Laufrichtung
+  assert.ok(single.crossed.has('y1'));
+  assert.ok(single.crossed.has('y2'));
+  assert.equal(single.crossed.get('y1'), 1);
+});
+
+test('Restliche Felder: der Zweig wird in Laufrichtung gefüllt und endet an der Zusammenführung', () => {
+  const r = walk(twoForks(), one(10), [...viaXU, { at: 'F2', toward: 'v1' }]);
+  assert.ok(r.crossed.has('v1'));
+  assert.ok(!r.crossed.has('y1'));
+  assert.equal(r.pending, null);
+  assert.equal(r.crossed.size, 10);
 });
 
 test('Restliche Felder: der gewählte Abschnitt wird gefüllt, ausgekreuzte Felder werden nicht doppelt gekreuzt', () => {
@@ -101,7 +132,7 @@ test('Restliche Felder: bei genau einer freien Möglichkeit geht es ohne Frage w
 });
 
 test('Restliche Felder: es gibt kein „Verfallen lassen“, solange noch ein Feld frei ist', () => {
-  const r = walk(probe(), one(7), [...viaX, { skip: true }]);
+  const r = walk(twoForks(), one(10), [...viaXU, { skip: true }]);
   assert.equal(r.pending.kind, 'leftover');
   assert.deepEqual(r.pending.rejected, { skip: true });
 });
@@ -179,17 +210,30 @@ test('Echter Graph: Stern 30 wird auf dem Kreispfad nie durch Kreuze gesetzt', (
   assert.ok(!real(1000).crossed.has('Blüte30'));
 });
 
-test('Blütenpfad: Gabelung an der Moossammlerin, danach nur noch Blüten in Punkte oder Stern 30 – Überschuss verfällt', () => {
+test('Blütenpfad: Gabelung an der Moossammlerin, der gewählte Weg endet vor Stern 30', () => {
   const ask = real(18, [], 'star');
   assert.equal(ask.pending.at, 'Moossammlerin');
   const reis = optionFor(ask.pending.options, 'Reisbäuerin');
-  const r = real(67, [reis], 'star');
+  const r = real(62, [reis], 'star');
   assert.ok(r.crossed.has('Umtrunk'));
   assert.ok(r.crossed.has('Geschenk'));
   assert.ok(!r.crossed.has('Sumoringer'));
   assert.ok(!r.crossed.has('Blüte30'));
   assert.equal(r.crossed.size, 62);
   assert.equal(r.ended, true);
-  assert.equal(r.expired, 5);
   assert.equal(r.pending, null);
+});
+
+test('Blütenpfad: nach dem Ende gibt es Restliche Felder wie auf dem Kreispfad (Entscheidung 12), danach verfallen Blüten', () => {
+  const reis = optionFor(real(18, [], 'star').pending.options, 'Reisbäuerin');
+  const more = real(67, [reis], 'star'); // 62 + 5 in den anderen Zweig, nur ein Eingang, daher ohne Frage
+  assert.equal(more.crossed.size, 67);
+  assert.ok(!more.crossed.has('Sumoringer'));
+  assert.equal(more.pending, null);
+  assert.ok(real(72, [reis], 'star').crossed.has('Sumoringer'));
+  const all = real(97, [reis], 'star');
+  assert.equal(all.crossed.size, 94);
+  assert.equal(all.allCrossed, true);
+  assert.equal(all.expired, 3);
+  assert.ok(!all.crossed.has('Blüte30'));
 });

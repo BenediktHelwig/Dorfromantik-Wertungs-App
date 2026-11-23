@@ -44,8 +44,13 @@ Diese Punkte füllen Lücken im Text. Weichen sie von deinem Spiel ab, bitte mel
   Kreuze offen, spätere Partien werden im Baum erst danach ausgewertet.
 - **Restliche Felder:** Gibt es nach „alles freigespielt“ in Laufrichtung keinen freien Kreis, wählt der
   Spieler einen Abschnitt mit freiem Kreis am Sechseck oder lässt die Kreuze der Partie verfallen.
-  An jeder weiteren Kreuzung wird gefragt. Sind alle 123 Kreise ausgekreuzt, verfallen die Kreuze
-  ohne Frage.
+  Sind alle 123 Kreise ausgekreuzt, verfallen die Kreuze ohne Frage.
+- **Kreuzungen in der Phase „Restliche Felder“ (von Benedikt bestätigt, 23.11.2026):** Hat ein Sechseck
+  dort genau einen freien Ausgang, läuft der Pfad automatisch weiter, auch wenn das Sechseck im Baum
+  mehrere Abschnitte hat. Gefragt wird nur bei mindestens zwei freien Ausgängen. Ist keiner frei,
+  wählt der Spieler einen freien Abschnitt oder lässt die Kreuze verfallen. „Kreuze verfallen lassen“
+  wird also nur dann angeboten, wenn kein freier Ausgang in Laufrichtung bleibt. Das weicht vom Wortlaut
+  „fragt an jeder Kreuzung nach“ in `app-anforderungen.md` ab, die Entscheidung geht vor.
 - **Entscheidungen hängen an der Reihenfolge der Fragen**, nicht an der Spielnummer. Wird ein Blatt
   korrigiert und passt eine Entscheidung nicht mehr, fragt die App neu (Warnung vor dem Speichern
   folgt in Schritt 2).

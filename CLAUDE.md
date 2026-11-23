@@ -12,13 +12,15 @@ Wertungs- und Kampagnen-App für das Brettspiel Dorfromantik (Basisspiel und sp�
 
 ## Stand
 - Fertig: Highscoreliste inkl. Zeilen 500/600/700, Wertungsblatt Basisspiel (B–E, S1–S3, H, Prüfung), Wirkung von Freischaltungen ab der Folgepartie, Erfolgskarten der Schachteln mit automatischer Prüfung am Partieende (`src/core/achievements.js`), „Eure Ergebnisse“ mit Kreuzen.
-- Prototyp-UI in `web/` (nur zum Ausprobieren, wird später durch die Nextcloud-Oberfläche ersetzt).
+- Fortschrittsbaum Basisspiel (Schritt 1): Graph als JSON (`src/core/graph-basis.json`, 14 Sechsecke, 123 Kreise, 3 Herz-Kreise), Pfadlogik in `src/core/progressTree.js` (`walkTree`: Gabelungswahl, ausgekreuzte Felder kosten nichts solange nicht alles freigespielt ist, kein Pfadende, optionale Restfelder, Verfall), `computeCampaign` in `src/core/campaign.js` berechnet Baum, Einträge im Bereich Kampagnenblatt, Schachtel 1/2 über den Baum, automatische Erfüllungen und verfügbare rote Herzen rein aus den Rohdaten (Wertungsblätter, Entscheidungen, manuelle Erfüllungen).
+- Entscheidungen zu Regellücken: `docs/entscheidungen.md` (hat Vorrang vor den übrigen Docs).
+- Prototyp-UI in `web/` (nur zum Ausprobieren, wird später durch die Nextcloud-Oberfläche ersetzt): Wertungsmaske, Fortschrittsbaum als SVG mit Rückfragen an Gabelungen, „Eure Ergebnisse“ und „Eure Erfolge“. Browser-Speicher nur mit Rohdaten.
 
 ## Roadmap
-1. **Fortschrittsbaum Basisspiel:** Graph aus `Wertungsblock-Diagramm.drawio` als JSON, Pfadlogik (Gabelungswahl, ausgekreuzte Felder kosten nichts solange nicht alles freigespielt ist, kein Pfadende, optionale Restfelder), automatische Einträge in „Eure Erfolge“ (Bereich Kampagnenblatt), rote Herzen.
-2. **Kampagnenverwaltung:** Startbildschirm, neue/laufende/beendete Kampagnen, Kampagne beenden, Korrektur gespeicherter Wertungsblätter mit Neuberechnung und Warnung.
-3. **Nextcloud-App-Gerüst** (PHP-Backend, Vue-Frontend, Speicherung pro Kampagne), PWA.
-4. **Variante Sakura:** eigenes Wertungsblatt, Graph `graph-sakura.json`, Kirschblüten mit Ausgabe-Budget, Erfolgsliste mit Automatismen.
+Reihenfolge wie in `dorfromantik-crew/docs/STEPS.md`; Schritt 1 ist fertig (siehe Stand).
+2. **Basisspiel vollständig (Kampagnenverwaltung):** Startbildschirm, neue/laufende/beendete Kampagnen, Kampagne beenden (danach nur ansehen und löschen), Korrektur gespeicherter Wertungsblätter mit Warnung und Neuberechnung.
+3. **Variante Sakura:** eigenes Wertungsblatt, Graph `graph-sakura.json`, Kirschblüten mit Ausgabe-Budget, Erfolgsliste mit Automatismen, gewählt bei Kampagnenanlage.
+4. **Nextcloud-Gerüst und PWA:** `docker compose` mit offiziellem Nextcloud-Image, PHP-Backend (Speicherung pro Kampagne, nur Rohdaten), Vue-Frontend mit unverändertem Kern, Manifest und Service Worker.
 
 ## Quellen der Spezifikation
 Die vollständigen Anforderungen pflegt Benedikt im Claude-Projekt „Wertung/Kampagne Dorfromantik“ (Docs: app-anforderungen, regeln-zusammenfassung, fortschrittsbaum, freischaltungen, fortschrittsbaum-sakura, wertungsblatt-sakura, freischaltregeln-sakura). Für das Basisspiel ist der relevante Teil in `docs/spezifikation-basis.md` zusammengefasst.

@@ -51,3 +51,6 @@ export function highscoreRow(total) {
   }
   return HIGHSCORE_BASIS.find((row) => total >= row.min);
 }
+
+/** Highscoreliste Sakura (Entscheidung 23.11.2026, Schritt 3). */
+export const HIGHSCORE_SAKURA = Object.freeze([]);

@@ -102,3 +102,7 @@ export function campaignOverview(campaigns) {
   const pick = (finished) => campaigns.filter((c) => isFinished(c) === finished).map(entry).sort(newestFirst);
   return { running: pick(false), finished: pick(true) };
 }
+
+// Stubs Schritt 3 (red)
+export const chooseCollector = () => { throw new Error('nicht implementiert'); };
+export const setGameEnd = () => { throw new Error('nicht implementiert'); };

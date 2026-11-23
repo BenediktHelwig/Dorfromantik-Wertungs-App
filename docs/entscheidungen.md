@@ -138,3 +138,20 @@ Diese Punkte füllen Lücken im Text. Weichen sie von deinem Spiel ab, bitte mel
 ### 10. Spalten Rundum und 7er-Aufträge
 - **Entscheidung:** Rundum ist ab der Partie nach „Öffnet Box 1“ offen, die 7er-Aufträge ab der Partie nach dem Öffnen
   von Box 5. Vorher müssen die Felder 0 sein.
+
+### Auslegung (aus den Docs abgeleitet, keine neue Regel; bei Abweichung bitte melden)
+- **Zählung der Felder:** `fortschrittsbaum-sakura.md` nennt 123 Felder auf dem Kreispfad. Gemessen am Graphen sind es
+  116 (97 Kreise, 8 Sechsecke, 3 Boxen, 4 Karten, 4 „+1“-Quadrate); die übrigen Sechsecke und Quadrate der 123 liegen
+  auf dem Blütenpfad (94 Felder: 87 Sterne und 7 benannte). Die Tests gehen vom Graphen aus.
+- **Blütenpfad nach dem Ende:** Entscheidung 6 gilt wörtlich: Es gibt keine „Restlichen Felder“, überschüssige
+  Blüten gehen nur noch in Punkte oder Stern 30. (Auf dem Kreispfad gilt Entscheidung 8.)
+- **Restliche Felder, eine Möglichkeit:** Gibt es genau ein freies Feld neben einem ausgekreuzten Feld, kreuzt die App
+  ohne Frage weiter (Entscheidung 8, „Gefragt wird nur bei mindestens zwei Möglichkeiten“).
+- **Einsetzen einer Gabelung:** Die Frage nach dem Zweig kommt erst bei Bedarf (wie im Basisspiel).
+- **Meisterprüfung und „teil-auto“-Karten:** Bestätigen die Meisterprüfung kostet 10 Blüten zusätzlich zu fehlenden
+  Punkten. Ochsenkarren und Schiff brauchen nur das Bestätigen des Spielers (Straße/Fluss ≥12 Plättchen).
+- **Gesammelte Blüten zählen als Punkte** (auch für die Gesamtsumme der Aufgaben, z. B. Kleine Wolken ≥300).
+- **Namen der Karten:** auf dem Bogen „Kleine Wolken“ und „Schiff und Anlegestelle“; die Docs schreiben „Kleine Wolke“
+  und „Schiff und Angelstelle“. Die App folgt dem Bogen.
+- **Partieende-Eintrag:** Er wird direkt nach dem Speichern des Blatts eingetragen (Kalligraph, Blüten, Bestätigungen)
+  und danach nicht mehr geändert (wie das Wertungsblatt selbst, Entscheidung Schritt 2).

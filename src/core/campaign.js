@@ -26,3 +26,8 @@ export function campaignResults(sheets) {
 export function nextGameNumber(sheets) {
   return sheets.reduce((max, s) => Math.max(max, s.gameNumber), 0) + 1;
 }
+
+/** Stub (red-Phase): Verhalten folgt im green-Commit. */
+export function computeCampaign() {
+  throw new Error('computeCampaign: noch nicht implementiert');
+}

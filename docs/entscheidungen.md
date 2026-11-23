@@ -54,3 +54,27 @@ Diese Punkte füllen Lücken im Text. Weichen sie von deinem Spiel ab, bitte mel
 - **Entscheidungen hängen an der Reihenfolge der Fragen**, nicht an der Spielnummer. Wird ein Blatt
   korrigiert und passt eine Entscheidung nicht mehr, fragt die App neu (Warnung vor dem Speichern
   folgt in Schritt 2).
+
+## 23.11.2026 – Kampagnenverwaltung Basisspiel (Schritt 2)
+
+### 1. Keine Korrektur gespeicherter Wertungsblätter
+- **Regel:** Darf ein gespeichertes Wertungsblatt nachträglich geändert werden?
+- **Entscheidung:** Nein. Die Rückfrage „Ist alles eingetragen?“ vor dem Speichern ist die einzige
+  Absicherung. Der Abschnitt „Nachträgliche Korrektur geschlossener Wertungsblätter (erlaubt)“ in
+  `app-anforderungen.md` entfällt, ebenso die dort beschriebene Warnung. Die Ankündigung „Warnung vor
+  dem Speichern folgt in Schritt 2“ weiter oben ist damit hinfällig. Das Rohdaten-Prinzip bleibt, alles
+  Abgeleitete wird weiter neu berechnet.
+- **Grund:** Antwort von Benedikt.
+
+### 2. Die Kampagne entsteht mit dem ersten gespeicherten Wertungsblatt
+- **Regel:** Wann wird eine Kampagne angelegt, woher kommt ihr Name?
+- **Entscheidung:** „Neue Kampagne starten“ öffnet ein leeres Blatt für Spiel 1, erst „Speichern“ legt die
+  Kampagne an (Beginn = Datum des Speicherns). Der Name sind die Mitspielenden aus Spiel 1, dort Pflicht.
+  Ab Spiel 2 werden sie fest übernommen und sind nicht änderbar. Der Startbildschirm zeigt diese Namen.
+- **Grund:** Realer Ablauf: Benedikt spielt zuerst, legt die Kampagne am Partieende an und trägt die Wertung ein.
+
+### 3. Beenden und Löschen
+- **Entscheidung:** „Kampagne beenden“ mit „Bist du sicher?“ trägt das Enddatum ein und ist gesperrt, solange
+  im Fortschrittsbaum eine Frage offen ist (erst beantworten). Danach nur ansehen und löschen. Löschen ist bei
+  laufenden und beendeten Kampagnen möglich, immer mit Sicherheitsabfrage.
+- **Grund:** Antwort von Benedikt; die Sperre bei offener Frage ist die empfohlene Auslegung.

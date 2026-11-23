@@ -1,6 +1,6 @@
 - [x] Step 1 — feat/progress-tree-base, https://github.com/BenediktHelwig/Dorfromantik-Wertungs-App/pull/1 (Basis: main)
 - [x] Step 2 — feat/base-game-complete, https://github.com/BenediktHelwig/Dorfromantik-Wertungs-App/pull/2 (Basis: feat/progress-tree-base)
-- [x] Step 3 — feat/variant-sakura, PR-Link folgt unten (Basis: feat/base-game-complete)
+- [x] Step 3 — feat/variant-sakura, https://github.com/BenediktHelwig/Dorfromantik-Wertungs-App/pull/3 (Basis: feat/base-game-complete)
 
 Nächster Schritt: Step 4 — Nextcloud-Gerüst und PWA, Branch `feat/nextcloud-pwa`, Basis ist `feat/variant-sakura`.
 

@@ -367,30 +367,7 @@ $('#new-sakura').addEventListener('click', () => openSakuraScreen(null));
 function deleteById(id) {
   store.campaigns = deleteCampaign(store.campaigns, id);
   saveStore();
-  /** Öffnet eine Sakura-Kampagne (oder eine neue); die Oberfläche dafür liegt in sakura.js. */
-function openSakuraScreen(id) {
-  const existing = id === null ? null : store.campaigns.find((c) => c.id === id);
-  campaign = null;
-  sheet = undefined;
-  $('#start-screen').hidden = true;
-  $('#campaign-screen').hidden = true;
-  $('#sakura-screen').hidden = false;
-  openSakura($('#sakura-screen'), {
-    campaign: existing,
-    persist: (next) => {
-      const i = store.campaigns.findIndex((c) => c.id === next.id);
-      if (i >= 0) store.campaigns[i] = next;
-      else store.campaigns.push(next);
-      saveStore();
-    },
-    back: showStart,
-    remove: deleteById,
-    newId,
-    today,
-  });
-}
-
-showStart();
+  showStart();
 }
 
 function campaignCard(entry, finished) {
@@ -434,5 +411,29 @@ function openCampaign(id) {
   renderAll();
   if (!readOnly()) newSheet();
 }
+
+/** Öffnet eine Sakura-Kampagne (oder eine neue); die Oberfläche dafür liegt in sakura.js. */
+function openSakuraScreen(id) {
+  const existing = id === null ? null : store.campaigns.find((c) => c.id === id);
+  campaign = null;
+  sheet = undefined;
+  $('#start-screen').hidden = true;
+  $('#campaign-screen').hidden = true;
+  $('#sakura-screen').hidden = false;
+  openSakura($('#sakura-screen'), {
+    campaign: existing,
+    persist: (next) => {
+      const i = store.campaigns.findIndex((c) => c.id === next.id);
+      if (i >= 0) store.campaigns[i] = next;
+      else store.campaigns.push(next);
+      saveStore();
+    },
+    back: showStart,
+    remove: deleteById,
+    newId,
+    today,
+  });
+}
+
 
 showStart();

@@ -206,7 +206,8 @@ export function openSakura(host, env) {
     form.append(el('section', { className: 'result' },
       el('p', {}, 'Ergebnis = ', el('output', { id: 'sk-total', value: 0 })),
       el('p', { id: 'sk-row' }), el('ul', { id: 'sk-errors', className: 'errors' }),
-      el('button', { type: 'submit', textContent: 'Wertung speichern' })));
+      el('button', { type: 'submit', textContent: 'Wertung speichern', disabled: computed.collectorOpen }),
+      el('p', { className: 'hint', textContent: computed.collectorOpen ? 'Bitte zuerst den Blütensammler wählen.' : '' })));
     form.addEventListener('submit', (e) => { e.preventDefault(); save(); });
     return form;
   }
@@ -231,7 +232,7 @@ export function openSakura(host, env) {
   }
 
   function save() {
-    if (errors().length > 0 || !confirm('Ist alles eingetragen?')) return;
+    if (computed.collectorOpen || errors().length > 0 || !confirm('Ist alles eingetragen?')) return;
     const finished = sheet;
     const before = computed;
     commit(campaign
@@ -239,12 +240,17 @@ export function openSakura(host, env) {
       : startCampaign({ id: env.newId(), date: env.today(), firstSheet: finished, variant: 'sakura' }));
     sheet = null;
     recompute();
-    const norm = computed.sheets.find((s) => s.gameNumber === finished.gameNumber);
-    const needsDialog = blossomBudget(norm) > 0
-      || Number.isInteger(before.unlockGames.kalligraph) && before.unlockGames.kalligraph < finished.gameNumber
-      || SAKURA_ACHIEVEMENTS.some((a) => a.kind === 'confirm' && before.received.has(a.id) && !Number.isInteger(computed.unlockGames[a.id]));
-    ending = needsDialog ? { gameNumber: finished.gameNumber, received: before.received, flippable: before.flippable[finished.gameNumber], draft: {} } : null;
+    ending = endingFor(finished.gameNumber, before);
     renderAll();
+  }
+
+  /** Partieende-Dialog für ein Spiel, falls es etwas einzutragen gibt (Blüten, Kalligraph, Bestätigungen). */
+  function endingFor(gameNumber, before) {
+    const norm = computed.sheets.find((s) => s.gameNumber === gameNumber);
+    const needsDialog = blossomBudget(norm) > 0
+      || Number.isInteger(before.unlockGames.kalligraph) && before.unlockGames.kalligraph < gameNumber
+      || SAKURA_ACHIEVEMENTS.some((a) => a.kind === 'confirm' && before.received.has(a.id) && !Number.isInteger(computed.unlockGames[a.id]));
+    return needsDialog ? { gameNumber, received: before.received, flippable: before.flippable[gameNumber], draft: {} } : null;
   }
 
   // ---- Partieende: Kalligraph und Blüten-Dialog ----
@@ -299,7 +305,11 @@ export function openSakura(host, env) {
       ending = null;
       renderAll();
     });
-    const skip = el('button', { type: 'button', textContent: 'Nichts eintragen, weiter', onclick: () => { ending = null; renderAll(); } });
+    // "Nichts eintragen" speichert einen leeren Eintrag, damit der Dialog nicht bei jedem Öffnen wiederkommt.
+    const skip = el('button', {
+      type: 'button', textContent: 'Nichts eintragen, weiter',
+      onclick: () => { commit(setGameEnd(campaign, gameNumber, {})); ending = null; renderAll(); },
+    });
     section.append(status, saveButton, ' ', skip);
     refresh();
     return section;
@@ -363,6 +373,15 @@ export function openSakura(host, env) {
       el('p', { className: 'hint', textContent: computed.collectorOpen || !campaign?.collector ? '' : `Blütensammler: ${LABEL.get(campaign.collector)}` }));
   }
 
+  // Wurde die Kampagne vor dem Eintrag am Partieende geschlossen, fragt die Oberfläche erneut.
+  if (campaign && !readOnly()) {
+    const last = Math.max(...campaign.sheets.map((s) => s.gameNumber));
+    if (!campaign.gameEnds[last]) {
+      const { [last]: _open, ...gameEnds } = campaign.gameEnds;
+      const before = computeSakuraCampaign({ ...campaign, sheets: campaign.sheets.filter((s) => s.gameNumber < last), gameEnds });
+      ending = endingFor(last, before);
+    }
+  }
   renderAll();
 }
 

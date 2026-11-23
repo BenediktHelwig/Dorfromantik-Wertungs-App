@@ -121,7 +121,8 @@ Diese Punkte füllen Lücken im Text. Weichen sie von deinem Spiel ab, bitte mel
 - **Entscheidung:** Kreis- und Blütenpfad sind linear und enden jeweils vor Stern 30. Stern 30 wird nur ausgekreuzt, wenn
   30 Blüten auf einmal bezahlt werden. Ist der Kreispfad bis vor Stern 30 ausgekreuzt, kommen Kreuze der Partie in die noch
   offenen Kreise, um noch nicht Freigeschaltetes freizuschalten. Der Blütenpfad hat Gabelung an der Moossammlerin (Graph
-  bestätigt). Blüten nach dem Pfadende gehen nur noch in Punkte oder in Stern 30.
+  bestätigt). Blüten nach dem Pfadende gehen nur noch in Punkte oder in Stern 30 (Teil „Blüten nur in Punkte oder
+  Stern 30“ ersetzt durch Entscheidung 12).
 - **Grund:** Antwort von Benedikt.
 
 ### 7. Benannte Felder auf dem Blütenpfad

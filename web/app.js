@@ -16,6 +16,7 @@ import {
   canEndCampaign, endCampaign, isFinished, deleteCampaign, campaignOverview,
 } from '../src/core/campaigns.js';
 import { BASIS_GRAPH as GRAPH, circleId } from '../src/core/progressTree.js';
+import { openSakura } from './sakura.js';
 
 const STORAGE_KEY = 'dorfromantik-kampagnen-v3';
 const DEMO_KEY = 'dorfromantik-demo-kampagne-v2'; // Prototyp 0.2: genau eine Kampagne
@@ -359,23 +360,47 @@ $('#delete-campaign').addEventListener('click', () => {
 
 $('#back').addEventListener('click', showStart);
 $('#new-campaign').addEventListener('click', () => openCampaign(null));
+$('#new-sakura').addEventListener('click', () => openSakuraScreen(null));
 
 // ---- Startbildschirm ----
 
 function deleteById(id) {
   store.campaigns = deleteCampaign(store.campaigns, id);
   saveStore();
-  showStart();
+  /** Öffnet eine Sakura-Kampagne (oder eine neue); die Oberfläche dafür liegt in sakura.js. */
+function openSakuraScreen(id) {
+  const existing = id === null ? null : store.campaigns.find((c) => c.id === id);
+  campaign = null;
+  sheet = undefined;
+  $('#start-screen').hidden = true;
+  $('#campaign-screen').hidden = true;
+  $('#sakura-screen').hidden = false;
+  openSakura($('#sakura-screen'), {
+    campaign: existing,
+    persist: (next) => {
+      const i = store.campaigns.findIndex((c) => c.id === next.id);
+      if (i >= 0) store.campaigns[i] = next;
+      else store.campaigns.push(next);
+      saveStore();
+    },
+    back: showStart,
+    remove: deleteById,
+    newId,
+    today,
+  });
+}
+
+showStart();
 }
 
 function campaignCard(entry, finished) {
   const card = document.createElement('div');
   card.className = 'campaign-card';
   const text = document.createElement('span');
-  text.textContent = `${entry.name} · ${entry.startDate}${entry.endDate ? ` bis ${entry.endDate}` : ''} · ${entry.games} Spiel${entry.games === 1 ? '' : 'e'}`;
+  text.textContent = `${entry.name}${entry.variant === 'sakura' ? ' · Sakura' : ''} · ${entry.startDate}${entry.endDate ? ` bis ${entry.endDate}` : ''} · ${entry.games} Spiel${entry.games === 1 ? '' : 'e'}`;
   const open = Object.assign(document.createElement('button'), {
     type: 'button', textContent: finished ? 'Ansehen' : 'Fortsetzen',
-    onclick: () => openCampaign(entry.id),
+    onclick: () => (entry.variant === 'sakura' ? openSakuraScreen(entry.id) : openCampaign(entry.id)),
   });
   const remove = Object.assign(document.createElement('button'), {
     type: 'button', textContent: 'Löschen',
@@ -395,6 +420,7 @@ function showStart() {
   $('#campaigns-running').replaceChildren(...(running.length ? running.map((c) => campaignCard(c, false)) : [none('Keine laufende Kampagne.')]));
   $('#campaigns-finished').replaceChildren(...(finished.length ? finished.map((c) => campaignCard(c, true)) : [none('Keine beendete Kampagne.')]));
   $('#campaign-screen').hidden = true;
+  $('#sakura-screen').hidden = true;
   $('#start-screen').hidden = false;
 }
 

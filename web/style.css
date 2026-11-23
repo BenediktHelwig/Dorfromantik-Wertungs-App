@@ -77,3 +77,9 @@ h3 { font-size: 0.9rem; margin: 0.75rem 0 0.25rem; }
 .campaign-card button, header .actions button, #back { margin-top: 0; }
 header .actions { display: flex; gap: 0.5rem; margin: 0.5rem 0; }
 button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Variante Sakura */
+.tree .circle.blossom { stroke: #d86a9b; }
+.tree .circle.blossom.crossed { fill: #d86a9b; stroke: #d86a9b; }
+.tree .sk-label { text-anchor: start; font-size: 22px; }
+#sakura-screen label.inline { margin: 0.25rem 0; }

@@ -44,6 +44,7 @@ export function computeSakuraCampaign({
   const normalized = [];
   const gameEndResults = {};
   const activatable = {};
+  const flippable = {};
   let bigStarGame = null;
   let trees = { path: walk('path', []), star: walk('star', []) };
 
@@ -74,6 +75,7 @@ export function computeSakuraCampaign({
     // Partieende-Eintrag (Blüten, Kalligraph, Bestätigungen), geprüft gegen den Stand vor dieser Partie.
     const cards = starCardState({ unlockGames, history, gameNumber: n });
     activatable[n] = cards.activatable;
+    flippable[n] = cards.flippable;
     const entry = gameEnds[n] ?? {};
     const context = {
       sheet: norm, received: receivedAt(n), unlockGames, flippable: cards.flippable,
@@ -126,7 +128,9 @@ export function computeSakuraCampaign({
     totalCrosses += row.crosses;
   }
   const next = ordered.reduce((max, s) => Math.max(max, s.gameNumber), 0) + 1;
-  activatable[next] = starCardState({ unlockGames, history, gameNumber: next }).activatable;
+  const nextCards = starCardState({ unlockGames, history, gameNumber: next });
+  activatable[next] = nextCards.activatable;
+  flippable[next] = nextCards.flippable;
 
   const collectorOpen = boxGames[3] !== undefined && !collector;
   const treePending = trees.path.pending ?? trees.star.pending;
@@ -146,6 +150,7 @@ export function computeSakuraCampaign({
     unlockedForNext: { bonusIds: unlockedBonusIdsAt(next), columns: LOCKABLE_COLUMNS.filter((c) => columnsAt(next)[c]) },
     gameEndResults,
     activatable,
+    flippable,
     bigStarGame,
     collectorOpen,
     pending,

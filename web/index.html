@@ -13,9 +13,10 @@
   </p>
   <script>if (location.protocol === 'file:') document.getElementById('file-warning').hidden = false;</script>
   <div id="start-screen" hidden>
-    <header><h1>Dorfromantik – Kampagnen</h1><p class="meta">Basisspiel · Prototyp</p></header>
+    <header><h1>Dorfromantik – Kampagnen</h1><p class="meta">Basisspiel und Sakura · Prototyp</p></header>
     <section>
-      <button type="button" id="new-campaign">Neue Kampagne starten</button>
+      <button type="button" id="new-campaign">Neue Kampagne starten (Basisspiel)</button>
+      <button type="button" id="new-sakura">Neue Kampagne starten (Sakura)</button>
     </section>
     <section>
       <h2>Laufende Kampagnen</h2>
@@ -27,6 +28,8 @@
       <div id="campaigns-finished" class="campaigns"></div>
     </section>
   </div>
+
+  <div id="sakura-screen" hidden></div>
 
   <div id="campaign-screen" hidden>
   <header>

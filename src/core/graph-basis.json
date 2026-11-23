@@ -1,1 +1,40 @@
-{ "start": { "id": "start" }, "hexagons": [], "sections": [] }
+{
+  "name": "Fortschrittsbaum Basisspiel",
+  "source": "docs/fortschrittsbaum.md, docs/Wertungsblock-Diagramm.drawio",
+  "start": { "id": "start", "label": "Wanderer", "x": 450, "y": 960 },
+  "hexagons": [
+    { "id": "box1", "label": "Öffnet Schachtel 1", "kind": "box", "box": 1, "x": 260, "y": 960 },
+    { "id": "box2", "label": "Öffnet Schachtel 2", "kind": "box", "box": 2, "x": 260, "y": 800 },
+    { "id": "lagerhaus", "label": "Lagerhaus", "kind": "achievement", "x": 60, "y": 800 },
+    { "id": "zirkus", "label": "Zirkus", "kind": "achievement", "x": 460, "y": 800 },
+    { "id": "getreidetunnel", "label": "Getreidetunnel", "kind": "achievement", "x": 60, "y": 640 },
+    { "id": "bahnwaerter", "label": "Bahnwärter", "kind": "achievement", "x": 260, "y": 640 },
+    { "id": "damhirsch", "label": "Damhirsch", "kind": "achievement", "x": 460, "y": 640 },
+    { "id": "dorftunnel", "label": "Dorftunnel", "kind": "achievement", "x": 60, "y": 460 },
+    { "id": "schaeferin", "label": "Schäferin", "kind": "achievement", "x": 260, "y": 460 },
+    { "id": "burg", "label": "Burg", "kind": "achievement", "x": 460, "y": 460 },
+    { "id": "waldtunnel", "label": "Waldtunnel", "kind": "achievement", "x": 60, "y": 240 },
+    { "id": "huegel", "label": "Hügel", "kind": "achievement", "x": 260, "y": 240 },
+    { "id": "bauernhof", "label": "Bauernhof", "kind": "achievement", "x": 460, "y": 240 },
+    { "id": "wolke", "label": "Wolke", "kind": "achievement", "x": 260, "y": 90 }
+  ],
+  "sections": [
+    { "id": "start-box1", "from": "start", "to": "box1", "circles": 2 },
+    { "id": "box1-box2", "from": "box1", "to": "box2", "circles": 5 },
+    { "id": "box2-lagerhaus", "from": "box2", "to": "lagerhaus", "circles": 4 },
+    { "id": "box2-zirkus", "from": "box2", "to": "zirkus", "circles": 4 },
+    { "id": "lagerhaus-getreidetunnel", "from": "lagerhaus", "to": "getreidetunnel", "circles": 6 },
+    { "id": "lagerhaus-bahnwaerter", "from": "lagerhaus", "to": "bahnwaerter", "circles": 6 },
+    { "id": "zirkus-bahnwaerter", "from": "zirkus", "to": "bahnwaerter", "circles": 6 },
+    { "id": "zirkus-damhirsch", "from": "zirkus", "to": "damhirsch", "circles": 6 },
+    { "id": "getreidetunnel-dorftunnel", "from": "getreidetunnel", "to": "dorftunnel", "circles": 8, "heart": 4 },
+    { "id": "bahnwaerter-schaeferin", "from": "bahnwaerter", "to": "schaeferin", "circles": 8, "heart": 4 },
+    { "id": "damhirsch-burg", "from": "damhirsch", "to": "burg", "circles": 8, "heart": 4 },
+    { "id": "dorftunnel-waldtunnel", "from": "dorftunnel", "to": "waldtunnel", "circles": 10 },
+    { "id": "schaeferin-huegel", "from": "schaeferin", "to": "huegel", "circles": 10 },
+    { "id": "burg-bauernhof", "from": "burg", "to": "bauernhof", "circles": 10 },
+    { "id": "waldtunnel-wolke", "from": "waldtunnel", "to": "wolke", "circles": 10 },
+    { "id": "huegel-wolke", "from": "huegel", "to": "wolke", "circles": 10 },
+    { "id": "bauernhof-wolke", "from": "bauernhof", "to": "wolke", "circles": 10 }
+  ]
+}

@@ -73,13 +73,22 @@ const fulfilledBefore = (unlockGames, id, gameNumber) =>
  * Schachteln 4 und 5, sobald die öffnende Karte in einer früheren Partie erfüllt wurde
  * (Schachtel wird am Partieende geöffnet, ihre Karten gelten ab der nächsten Partie).
  *
+ * Die Schachteln 1 und 2 öffnet der Fortschrittsbaum (Sechseck "Öffnet Schachtel n"): `boxGames` nennt
+ * die Spielnummer, in der das Sechseck erreicht wurde, ihre Karten gelten ab der Folgepartie.
+ *
  * @param {Iterable<string>} manualReceived
  * @param {Record<string, number|null|undefined>} unlockGames
  * @param {number} gameNumber
+ * @param {Record<number, number|null|undefined>} [boxGames] Schachtelnummer -> Spielnummer (Baum)
  * @returns {Set<string>}
  */
-export function receivedAchievements(manualReceived, unlockGames, gameNumber) {
+export function receivedAchievements(manualReceived, unlockGames, gameNumber, boxGames = {}) {
   const received = new Set(manualReceived);
+  for (const box of [1, 2]) {
+    if (Number.isInteger(boxGames[box]) && boxGames[box] < gameNumber) {
+      ACHIEVEMENTS.filter((a) => a.box === box).forEach((a) => received.add(a.id));
+    }
+  }
   for (const [box, opener] of Object.entries(BOX_OPENED_BY)) {
     if (fulfilledBefore(unlockGames, opener, gameNumber)) {
       ACHIEVEMENTS.filter((a) => a.box === Number(box)).forEach((a) => received.add(a.id));
@@ -111,12 +120,14 @@ export function availableHearts({ unlockGames, boardHeartGames = [], gameNumber 
  * das Wertungsblatt erfüllt.
  *
  * @param {object} sheet Wertungsblatt der gerade beendeten Partie
- * @param {{ received: Iterable<string>, unlockGames: Record<string, number|null|undefined> }} state
- *   received = vom Spieler angekreuzte ids (Karte erhalten), unlockGames = id -> eingetragene Spielnummer
+ * @param {{ received: Iterable<string>, unlockGames: Record<string, number|null|undefined>,
+ *   boxGames?: Record<number, number|null|undefined> }} state
+ *   received = vom Spieler angekreuzte ids (Karte erhalten), unlockGames = id -> eingetragene Spielnummer,
+ *   boxGames = vom Baum geöffnete Schachteln 1/2 (Schachtelnummer -> Spielnummer)
  * @returns {{ auto: string[], confirm: string[] }} auto = sofort eintragen, confirm = Spieler fragen
  */
-export function evaluateAchievements(sheet, { received, unlockGames }) {
-  const has = receivedAchievements(received, unlockGames, sheet.gameNumber);
+export function evaluateAchievements(sheet, { received, unlockGames, boxGames }) {
+  const has = receivedAchievements(received, unlockGames, sheet.gameNumber, boxGames);
   const open = ACHIEVEMENTS.filter((a) =>
     has.has(a.id) && !Number.isInteger(unlockGames[a.id]) && typeof a.check === 'function' && a.check(sheet));
   return {

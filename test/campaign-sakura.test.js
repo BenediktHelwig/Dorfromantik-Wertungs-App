@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import { createSakuraSheet } from '../src/core/sakura/scoresheet.js';
 import { COLLECTORS } from '../src/core/sakura/achievements.js';
 import { computeSakuraCampaign } from '../src/core/sakura/campaign.js';
+import { canEndCampaign } from '../src/core/campaigns.js';
 import { optionFor } from './helpers/sakura.js';
 
 const PLAYERS = 'Anna, Ben';
@@ -229,4 +230,49 @@ test('Alles wird allein aus den Rohdaten berechnet: gleiches Ergebnis, Eingabe b
   assert.deepEqual(a.rows, b.rows);
   assert.deepEqual(a.unlockGames, b.unlockGames);
   assert.deepEqual(data, frozen);
+});
+
+// ---- Nachträge aus dem Review ----
+
+/** Fünf Partien à 16 Kreuze über See und Brücken: 75 Felder sind der gewählte Weg, 5 Kreuze bleiben übrig. */
+const pathEnded = () => ({ ...decide(raw([1, 2, 3, 4, 5].map((n) => sheet(n, 500))), 'See', 'Brücken'), collector: 'gourmet' });
+
+test('Pfadende auf dem Kreispfad: es bleibt eine Frage nach den Restlichen Feldern offen und sperrt das Beenden', () => {
+  const data = pathEnded();
+  const c = computeSakuraCampaign(data);
+  assert.equal(c.trees.path.ended, true);
+  assert.equal(c.pending.kind, 'leftover');
+  assert.equal(c.pending.track, 'path');
+  assert.equal(c.pending.remaining, 5);
+  assert.deepEqual(c.pending.options.map((o) => o.at).sort(), ['Box2', 'HeisseQuellen'], 'nur von den Gabelungen her');
+  const campaign = { ...data, id: 'k', variant: 'sakura', startDate: '2026-11-20', endDate: null };
+  assert.equal(canEndCampaign(campaign), false);
+});
+
+test('Restliche Felder schalten Karten in nicht gewählten Zweigen frei (Kreuzung hinter Öffnet Box 2)', () => {
+  const answered = decide(pathEnded(), 'Kreuzung');
+  const c = computeSakuraCampaign(answered);
+  assert.equal(c.trees.path.crossed.get('Kreuzung'), 5);
+  assert.equal(c.unlockGames.strassenkreuzung, 5);
+  assert.ok(c.received.has('strassenkreuzung'));
+  assert.equal(c.pending, null);
+});
+
+test('Nach dem Öffnen von Box 5 ist die Spalte 7er-Aufträge ab der Folgepartie offen, in der Partie selbst noch nicht', () => {
+  const second = sheet(2, 240, (s) => { s.bonuses.kirschblueten.points = 10; });
+  const data = { ...boxThree([second]), collector: 'gourmet', gameEnds: { 2: { confirmed: ['meisterpruefung'] } } };
+  const c = computeSakuraCampaign(data);
+  assert.equal(c.boxGames[5], 2);
+  assert.equal(c.sheets[1].columns.sieben, false);
+  assert.ok(c.unlockedForNext.columns.includes('sieben'));
+  assert.ok(c.unlockedForNext.columns.includes('rundum'));
+});
+
+test('Aufgaben werden erst ab der Partie nach dem Erhalt der Karte geprüft (Zeitregel N+1)', () => {
+  const first = sheet(1, 410, (s) => { s.orders.dorf = 50; }); // Gourmet-Aufgabe schon in Spiel 1 erreicht
+  const second = sheet(2, 0, (s) => { s.orders.dorf = 50; });
+  const data = { ...decide(raw([first, second]), 'See'), collector: 'gourmet' };
+  const c = computeSakuraCampaign(data);
+  assert.equal(c.boxGames[3], 1);
+  assert.equal(c.unlockGames.gourmet, 2);
 });

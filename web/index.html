@@ -51,14 +51,22 @@
       </section>
 
       <section>
-        <h2>Eure Erfolge (Testdaten)</h2>
-        <p class="hint">Häkchen = Karte erhalten. Zahl = Spielnummer der Freischaltung, wirkt ab dem nächsten Spiel. Beim Speichern setzt die App erfüllte Karten selbst.</p>
+        <h2>Fortschrittsbaum</h2>
+        <p class="hint" id="tree-summary"></p>
+        <div id="tree-question" class="question"></div>
+        <div id="tree"></div>
+      </section>
+
+      <section>
+        <h2>Eure Erfolge</h2>
+        <p class="hint">Häkchen = Karte erhalten. Zahl = Spielnummer der Freischaltung, wirkt ab dem nächsten Spiel. Alles wird aus den Wertungsblättern und dem Fortschrittsbaum berechnet; nur Fahnenfest trägst du selbst ein.</p>
         <p id="last-unlocks" class="notice"></p>
         <h3>Schachteln</h3>
         <div id="unlocks-boxes" class="unlocks"></div>
         <h3>Kampagnenblatt</h3>
         <div id="unlocks-board" class="unlocks"></div>
-        <p class="hint">Herz-Kreise: Spielnummer, in der der Kreis ausgekreuzt wurde. Zählt erst, wenn Herzenswünsche erfüllt ist.</p>
+        <h3>Herz-Kreise</h3>
+        <p class="hint">Spielnummer, in der der Kreis ausgekreuzt wurde. Zählt erst, wenn Herzenswünsche erfüllt ist.</p>
         <div id="unlocks-hearts" class="unlocks"></div>
         <button type="button" id="reset">Demo-Kampagne zurücksetzen</button>
       </section>

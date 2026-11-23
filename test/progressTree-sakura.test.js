@@ -5,7 +5,11 @@ import assert from 'node:assert/strict';
 import { SAKURA_GRAPH, walkTrack } from '../src/core/sakura/progressTree.js';
 import { optionFor } from './helpers/sakura.js';
 
-/** S – a – F ⟨x1..xN | y1..yM⟩ J – z – E(nd). Felder: a, F, x*, y*, J, z (S und E sind es nicht). */
+/**
+ * S – a – F ⟨x1..xN | y1..yM⟩ J – z – E(nd). Felder: a, F, x*, y*, J, z (S und E sind es nicht).
+ * Die beiden Zweige müssen gleich lang sein (x = y), wie im echten Graphen; die Laufrichtung ergibt sich
+ * aus dem Abstand von der Wurzel.
+ */
 function probe({ x = 2, y = 2 } = {}) {
   const nodes = [
     { id: 'S', type: 'start' }, { id: 'a', type: 'circle' }, { id: 'F', type: 'hex' },
@@ -91,7 +95,7 @@ test('Restliche Felder: der gewählte Abschnitt wird gefüllt, ausgekreuzte Feld
 });
 
 test('Restliche Felder: bei genau einer freien Möglichkeit geht es ohne Frage weiter', () => {
-  const r = walk(probe({ x: 2, y: 1 }), one(7), viaX);
+  const r = walk(probe({ x: 1, y: 1 }), one(6), viaX);
   assert.ok(r.crossed.has('y1'));
   assert.equal(r.pending, null);
 });
@@ -103,9 +107,9 @@ test('Restliche Felder: es gibt kein „Verfallen lassen“, solange noch ein Fe
 });
 
 test('Sind alle Felder ausgekreuzt, verfallen übrige Kreuze ohne Frage', () => {
-  const r = walk(probe({ x: 2, y: 1 }), one(20), viaX);
-  assert.equal(r.crossed.size, 7);
-  assert.equal(r.expired, 13);
+  const r = walk(probe({ x: 1, y: 1 }), one(20), viaX);
+  assert.equal(r.crossed.size, 6);
+  assert.equal(r.expired, 14);
   assert.equal(r.allCrossed, true);
   assert.equal(r.pending, null);
 });

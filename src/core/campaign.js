@@ -4,6 +4,7 @@
 import { HIGHSCORE_BASIS, highscoreRow } from './highscore.js';
 import { computeTotals } from './scoresheet.js';
 import { evaluateAchievements, receivedAchievements, availableHearts } from './achievements.js';
+import { activeBonusIds } from './unlocks.js';
 import { BASIS_GRAPH, walkTree } from './progressTree.js';
 
 /**
@@ -30,25 +31,12 @@ export function nextGameNumber(sheets) {
 }
 
 /**
- * Berechnet die ganze Kampagne aus den Rohdaten (Rohdaten-Prinzip): Kreuze je Partie, Fortschrittsbaum,
- * Einträge in "Eure Erfolge" und verfügbare rote Herzen. Nichts davon wird gespeichert.
- *
- * Ablauf: Die Highscoreliste liefert je Partie die Kreuze, der Baum (walkTree) daraus die erreichten
- * Sechsecke. Erreicht in Spiel N heißt: Eintrag mit Spielnummer N, Wirkung ab Spiel N+1. "Öffnet
- * Schachtel 1" trägt "Rote Herzen" ein, die Karten der Schachteln 1 und 2 gelten ab der Folgepartie.
- * Danach werden die Wertungsblätter in Spielreihenfolge nachgespielt: erfüllte Karten bekommen ihre
- * Spielnummer (automatische Prüfung am Partieende). Eine Korrektur eines Blatts wirkt so auf alles Spätere.
- *
- * @param {{ sheets: object[], decisions?: import('./progressTree.js').Decision[],
- *   manualUnlocks?: Record<string, number>, manualReceived?: string[],
- *   graph?: import('./progressTree.js').Graph }} raw
- *   manualUnlocks = vom Spieler bestätigte Erfüllungen (z. B. Fahnenfest), manualReceived = von Hand gesetzte Kreuze
+ * Baum und Freischaltungen aus Wertungsblättern, deren Häkchen "freigespielt" schon stimmen.
+ * Erreicht in Spiel N heißt: Eintrag mit Spielnummer N, Wirkung ab Spiel N+1. "Öffnet Schachtel 1"
+ * trägt "Rote Herzen" ein, die Karten der Schachteln 1 und 2 gelten ab der Folgepartie. Danach werden die
+ * Blätter in Spielreihenfolge nachgespielt: erfüllte Karten bekommen ihre Spielnummer (Prüfung am Partieende).
  */
-export function computeCampaign({ sheets, decisions = [], manualUnlocks = {}, manualReceived = [], graph = BASIS_GRAPH }) {
-  const ordered = [...sheets].sort((a, b) => a.gameNumber - b.gameNumber);
-  const { rows, totalCrosses } = campaignResults(sheets);
-  const next = nextGameNumber(sheets);
-
+function deriveUnlocks(ordered, { decisions, manualUnlocks, manualReceived, graph }) {
   const tree = walkTree({
     graph,
     decisions,
@@ -73,9 +61,41 @@ export function computeCampaign({ sheets, decisions = [], manualUnlocks = {}, ma
     const { auto } = evaluateAchievements(sheet, { received: manualReceived, unlockGames, boxGames });
     for (const id of auto) unlockGames[id] = sheet.gameNumber;
   }
+  return { tree, unlockGames, boxGames };
+}
+
+/**
+ * Berechnet die ganze Kampagne aus den Rohdaten (Rohdaten-Prinzip): Kreuze je Partie, Fortschrittsbaum,
+ * Einträge in "Eure Erfolge" und verfügbare rote Herzen. Nichts davon wird gespeichert.
+ *
+ * Auch das Häkchen "freigespielt" der Boni in einem Wertungsblatt ist abgeleitet: Es wird je Partie aus den
+ * Freischaltungen früherer Partien neu bestimmt (Bonus aktiv, wenn seine Spielnummer kleiner ist) und nicht
+ * aus dem gespeicherten Blatt gelesen. So wirkt die Korrektur eines Blatts auf alles Spätere. Die übergebenen
+ * Blätter werden nicht verändert.
+ *
+ * @param {{ sheets: object[], decisions?: import('./progressTree.js').Decision[],
+ *   manualUnlocks?: Record<string, number>, manualReceived?: string[],
+ *   graph?: import('./progressTree.js').Graph }} raw
+ *   manualUnlocks = vom Spieler bestätigte Erfüllungen (z. B. Fahnenfest), manualReceived = von Hand gesetzte Kreuze
+ */
+export function computeCampaign({ sheets, decisions = [], manualUnlocks = {}, manualReceived = [], graph = BASIS_GRAPH }) {
+  const options = { decisions, manualUnlocks, manualReceived, graph };
+  const normalized = [];
+  for (const sheet of [...sheets].sort((a, b) => a.gameNumber - b.gameNumber)) {
+    const { unlockGames } = deriveUnlocks(normalized, options);
+    const active = new Set(activeBonusIds(unlockGames, sheet.gameNumber));
+    normalized.push({
+      ...sheet,
+      bonuses: Object.fromEntries(Object.entries(sheet.bonuses).map(([id, b]) => [id, { ...b, unlocked: active.has(id) }])),
+    });
+  }
+
+  const { rows, totalCrosses } = campaignResults(normalized);
+  const next = nextGameNumber(normalized);
+  const { tree, unlockGames, boxGames } = deriveUnlocks(normalized, options);
 
   const hearts = {};
-  for (const gameNumber of [...ordered.map((s) => s.gameNumber), next]) {
+  for (const gameNumber of [...normalized.map((s) => s.gameNumber), next]) {
     hearts[gameNumber] = availableHearts({ unlockGames, boardHeartGames: tree.heartGames, gameNumber });
   }
 

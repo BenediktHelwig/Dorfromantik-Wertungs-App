@@ -29,14 +29,16 @@ test('Ein Bonus, der noch nicht freigespielt ist, zählt nicht, auch wenn das H�
   assert.deepEqual(c.rows.find((r) => r.gameNumbers.includes(1)).min, 130);
 });
 
-test('Entfällt durch eine Korrektur eine Freischaltung, zählen die Boni späterer Blätter nicht mehr', () => {
+test('Verschiebt eine Korrektur eine Freischaltung, zählen die Boni späterer Blätter danach nicht mehr', () => {
   const later = sheet(2, 100, { unlocked: ['roteHerzen'], bonuses: { roteHerzen: 20 } });
   const before = computeCampaign({ sheets: [sheet(1, 130), later] });
+  assert.equal(before.unlockGames.roteHerzen, 1);
   assert.equal(before.rows.find((r) => r.gameNumbers.includes(2)).min, 120); // 100 + 20
 
-  // Spiel 1 wird auf 50 P korrigiert: nur 1 Kreuz, "Öffnet Schachtel 1" wird nicht erreicht.
+  // Spiel 1 wird auf 50 P korrigiert: 1 Kreuz, Schachtel 1 öffnet erst in Spiel 2 (1 + 2 Kreuze), der Bonus
+  // gilt also erst ab Spiel 3 und zählt in Spiel 2 nicht, obwohl das gespeicherte Häkchen gesetzt ist.
   const after = computeCampaign({ sheets: [sheet(1, 50), later] });
-  assert.equal(after.unlockGames.roteHerzen, undefined);
+  assert.equal(after.unlockGames.roteHerzen, 2);
   assert.equal(after.rows.find((r) => r.gameNumbers.includes(2)).min, 100); // nur noch 100 P
 });
 

@@ -7,6 +7,11 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <p id="file-warning" class="file-warning" hidden>
+    Die Seite wurde direkt als Datei geöffnet, dann blockiert der Browser das Skript und nichts funktioniert.
+    Bitte im Projektordner <code>npm start</code> ausführen und <a href="http://localhost:8080/web/">http://localhost:8080/web/</a> öffnen.
+  </p>
+  <script>if (location.protocol === 'file:') document.getElementById('file-warning').hidden = false;</script>
   <header>
     <h1>Wertungsblatt <span id="game-number"></span></h1>
     <p class="meta">Datum: <span id="game-date"></span> · Basisspiel · Prototyp</p>

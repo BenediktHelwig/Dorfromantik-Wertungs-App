@@ -274,6 +274,10 @@ function renderAll() {
 }
 
 $('#sheet').players.addEventListener('input', (e) => { sheet.players = e.target.value; });
+// Enter im Namensfeld soll das Blatt nicht abschicken, sondern nur das Feld verlassen.
+$('#sheet').players.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); }
+});
 
 $('#sheet').addEventListener('submit', (e) => {
   e.preventDefault();

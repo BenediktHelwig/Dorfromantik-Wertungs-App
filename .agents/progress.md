@@ -1,12 +1,13 @@
 - [x] Step 1 — feat/progress-tree-base, https://github.com/BenediktHelwig/Dorfromantik-Wertungs-App/pull/1 (Basis: main)
 - [x] Step 2 — feat/base-game-complete, https://github.com/BenediktHelwig/Dorfromantik-Wertungs-App/pull/2 (Basis: feat/progress-tree-base)
+- [x] Step 3 — feat/variant-sakura, PR-Link folgt unten (Basis: feat/base-game-complete)
 
-Nächster Schritt: Step 3 — Variante Sakura, Branch `feat/variant-sakura`, Basis ist `feat/base-game-complete`.
+Nächster Schritt: Step 4 — Nextcloud-Gerüst und PWA, Branch `feat/nextcloud-pwa`, Basis ist `feat/variant-sakura`.
 
-Hinweise für Step 3 (aus Step 2):
-- Eine gespeicherte Kampagne (Speicher `dorfromantik-kampagnen-v3`) hat noch kein Feld für die Variante. Für bestehende Daten gilt der Standard „basis“. Die Variante wird bei der Kampagnenanlage gewählt und bestimmt Wertungsblatt, Graph, Highscoreliste und Erfolgsliste.
-- `src/core/campaigns.js`: `startCampaign` bekommt die Variante, `createNextSheet` und `computeCampaign` müssen sie auswerten (heute fest `BASIS_GRAPH`, Basis-Highscoreliste und Basis-Erfolgskarten).
-- Es gibt keine Korrektur gespeicherter Wertungsblätter (Entscheidung 23.11.2026), das gilt auch für Sakura.
-- Die Oberfläche in `web/` wurde bisher nur von Benedikt von Hand ausprobiert: Anlegen, Zurück zum Startbildschirm und die gesperrte Beenden-Schaltung bei offener Gabelung gehen. Das Beenden nach der Antwort, Ansehen und Löschen sind noch nicht bestätigt.
-- Pull Requests: #1 (Step 1, Basis main) und #2 (Step 2, Basis feat/progress-tree-base). Mit Merge-Commit statt Squash mergen, zuerst #1, dann #2.
-- Lücke im Test: Die Sperre beim Beenden ist nur mit einer offenen Gabelungsfrage getestet, nicht mit einer offenen Frage der „Restlichen Felder“.
+Hinweise für Step 4 (aus Step 3):
+- Gespeichert werden Kampagnen als Rohdaten, je nach Variante: Basis `{ id, startDate, endDate, sheets, decisions, manualUnlocks, manualReceived }`, Sakura zusätzlich `variant: 'sakura'`, `collector`, `gameEnds` (statt `manualReceived`). Kampagnen ohne `variant` sind Basisspiel. Speicherschlüssel im Prototyp: `dorfromantik-kampagnen-v3`.
+- Der Kern (`src/core`) muss unverändert laufen. Die Regel „Partieende-Eintrag beim Öffnen erneut abfragen, bis ein Eintrag (auch `{}`) gespeichert ist“ und „Speichern gesperrt bei offener Blütensammler-Wahl“ stehen heute nur in `web/sakura.js`; ziehen sie in den Kern oder in Vue, brauchen sie Tests.
+- Ältere Hinweise: Es gibt keine Korrektur gespeicherter Wertungsblätter (Entscheidung 23.11.2026). Die Sperre beim Beenden ist für das Basisspiel nur mit offener Gabelungsfrage getestet, nicht mit „Restliche Felder“.
+- Die Oberflächen von Basisspiel und Sakura wurden nur per Headless-Chrome-Rauchtest bzw. von Hand von Benedikt angesehen, nicht vollständig durchgespielt.
+- `docs/img20261121_09333031.jpg` (Foto des Sakura-Bogens) liegt untracked im Repo, nicht committen ohne Rückfrage.
+- Pull Requests: #1 (Step 1, Basis main), #2 (Step 2), Step 3 (Basis feat/base-game-complete). Mit Merge-Commit statt Squash mergen, in dieser Reihenfolge.

@@ -1,7 +1,7 @@
-// Prototyp der Wertungsmaske (Basisspiel). Keine Abhängigkeiten, nur Browser-APIs.
-// Die Rechenlogik liegt in src/core und ist dort getestet. Gespeichert werden nur Rohdaten
-// (Wertungsblätter, Entscheidungen im Fortschrittsbaum, manuelle Erfüllungen), alles andere
-// berechnet computeCampaign bei jeder Änderung neu.
+// Prototyp der Wertungsmaske (Basisspiel) mit Kampagnenverwaltung. Keine Abhängigkeiten, nur Browser-APIs.
+// Die Rechenlogik liegt in src/core und ist dort getestet. Gespeichert werden nur Rohdaten je Kampagne
+// (Wertungsblätter, Entscheidungen im Fortschrittsbaum, manuelle Erfüllungen, Beginn und Ende),
+// alles andere berechnet computeCampaign bei jeder Änderung neu.
 
 import {
   ORDER_TYPES, FLAG_TYPES, LONGEST_TYPES, TYPE_LABELS, BONUSES,
@@ -11,44 +11,73 @@ import { highscoreRow } from '../src/core/highscore.js';
 import { activeBonusIds } from '../src/core/unlocks.js';
 import { ACHIEVEMENTS } from '../src/core/achievements.js';
 import { computeCampaign } from '../src/core/campaign.js';
+import {
+  startCampaign, campaignName, createNextSheet, addSheet, addDecision, setManualUnlock,
+  canEndCampaign, endCampaign, isFinished, deleteCampaign, campaignOverview,
+} from '../src/core/campaigns.js';
 import { BASIS_GRAPH as GRAPH, circleId } from '../src/core/progressTree.js';
 
-const STORAGE_KEY = 'dorfromantik-demo-kampagne-v2';
-const OLD_STORAGE_KEY = 'dorfromantik-demo-kampagne'; // Prototyp 0.1: speicherte auch Abgeleitetes
-const emptyCampaign = () => ({ sheets: [], decisions: [], manualUnlocks: {}, manualReceived: [] });
+const STORAGE_KEY = 'dorfromantik-kampagnen-v3';
+const DEMO_KEY = 'dorfromantik-demo-kampagne-v2'; // Prototyp 0.2: genau eine Kampagne
+const OLD_DEMO_KEY = 'dorfromantik-demo-kampagne'; // Prototyp 0.1: speicherte auch Abgeleitetes
+const NO_DATA = { sheets: [], decisions: [], manualUnlocks: {}, manualReceived: [] };
 
-function loadCampaign() {
-  try {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (stored) return { ...emptyCampaign(), ...stored };
-    // Übernahme aus 0.1: Blätter und manuelle Erfüllungen bleiben, Abgeleitetes wird neu berechnet.
-    const old = JSON.parse(localStorage.getItem(OLD_STORAGE_KEY));
-    if (old) {
-      const manualUnlocks = old.unlocks?.fahnenfest ? { fahnenfest: old.unlocks.fahnenfest } : {};
-      return { ...emptyCampaign(), sheets: old.sheets ?? [], manualUnlocks };
-    }
-  } catch {
-    // unlesbare Daten: neu anfangen
-  }
-  return emptyCampaign();
+const newId = () => (globalThis.crypto?.randomUUID?.() ?? `k${Date.now()}${Math.random().toString(36).slice(2)}`);
+
+/** Eine frühere Demo-Kampagne wird zur laufenden Kampagne; Abgeleitetes wird neu berechnet. */
+function migrateDemo() {
+  const demo = JSON.parse(localStorage.getItem(DEMO_KEY));
+  const old = demo ? null : JSON.parse(localStorage.getItem(OLD_DEMO_KEY));
+  const raw = demo ?? (old && {
+    sheets: old.sheets ?? [],
+    manualUnlocks: old.unlocks?.fahnenfest ? { fahnenfest: old.unlocks.fahnenfest } : {},
+  });
+  if (!raw?.sheets?.length) return [];
+  const sheets = raw.sheets.map((sh, i) => (i === 0 && !String(sh.players ?? '').trim() ? { ...sh, players: 'Demo-Kampagne' } : sh));
+  return [{ ...NO_DATA, ...raw, sheets, id: newId(), startDate: sheets[0].date, endDate: null }];
 }
 
-function saveCampaign() {
+function loadStore() {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(campaign));
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (stored?.campaigns) return stored;
+    return { campaigns: migrateDemo() };
+  } catch {
+    return { campaigns: [] }; // unlesbare Daten: neu anfangen
+  }
+}
+
+function saveStore() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
   } catch {
     // Speicher nicht verfügbar: Daten bleiben nur bis zum Neuladen erhalten.
   }
 }
 
-let campaign = loadCampaign();
-let computed = computeCampaign(campaign);
+const store = loadStore();
+let campaign = null; // geöffnete Kampagne; null = neue Kampagne, entsteht erst mit dem ersten gespeicherten Blatt
+let computed = computeCampaign(NO_DATA);
 let sheet;
 
 const $ = (sel) => document.querySelector(sel);
 const today = () => new Date().toISOString().slice(0, 10);
-const recompute = () => { computed = computeCampaign(campaign); };
-const validate = () => validateScoresheet(sheet, { hearts: computed.hearts[sheet.gameNumber] });
+const readOnly = () => campaign !== null && isFinished(campaign);
+const recompute = () => { computed = computeCampaign(campaign ?? NO_DATA); };
+const validate = () => {
+  const errors = validateScoresheet(sheet, { hearts: computed.hearts[sheet.gameNumber] });
+  if (!campaign && sheet.players.trim() === '') errors.unshift('Mitspielende: bitte eintragen, sie geben der Kampagne den Namen');
+  return errors;
+};
+
+/** Ersetzt die geöffnete Kampagne durch ihre neue Fassung und speichert. */
+function commit(next) {
+  campaign = next;
+  const i = store.campaigns.findIndex((c) => c.id === next.id);
+  if (i >= 0) store.campaigns[i] = next;
+  else store.campaigns.push(next);
+  saveStore();
+}
 
 const NODE_LABELS = new Map([[GRAPH.start.id, GRAPH.start.label], ...GRAPH.hexagons.map((h) => [h.id, h.label])]);
 const labelOf = (id) => NODE_LABELS.get(id) ?? id;
@@ -65,19 +94,19 @@ function numberField(label, value, onInput, disabled = false, event = 'input') {
 }
 
 function newSheet() {
-  const gameNumber = computed.nextGameNumber;
-  sheet = createScoresheet({
-    gameNumber,
-    date: today(),
-    unlockedBonusIds: activeBonusIds(computed.unlockGames, gameNumber),
-  });
+  sheet = campaign
+    ? createNextSheet(campaign, today())
+    : createScoresheet({ gameNumber: 1, date: today() });
   renderSheet();
 }
 
 function renderSheet() {
-  $('#game-number').textContent = `Spiel ${sheet.gameNumber}`;
+  $('#game-number').textContent = `Wertungsblatt Spiel ${sheet.gameNumber}`;
   $('#game-date').textContent = sheet.date;
+  // Die Mitspielenden aus Spiel 1 geben der Kampagne den Namen und sind ab Spiel 2 fest.
   $('#sheet').players.value = sheet.players;
+  $('#sheet').players.disabled = campaign !== null;
+  $('#players-hint').textContent = campaign ? 'ab Spiel 2 fest übernommen' : 'Pflicht, gibt der Kampagne den Namen';
 
   const field = (label, obj, key) => numberField(label, obj[key], (v) => { obj[key] = v; update(); });
   $('#orders').replaceChildren(...ORDER_TYPES.map((t) => field(TYPE_LABELS[t], sheet.orders, t)));
@@ -181,17 +210,14 @@ function renderTree() {
 }
 
 function decide(decision) {
-  const { pending } = computed.tree;
-  if (pending.rejected) campaign.decisions[campaign.decisions.indexOf(pending.rejected)] = decision;
-  else campaign.decisions.push(decision);
-  saveCampaign();
+  commit(addDecision(campaign, decision));
   renderAll();
 }
 
 function renderQuestion() {
   const { pending } = computed.tree;
   const box = $('#tree-question');
-  if (!pending) { box.replaceChildren(); return; }
+  if (!pending || readOnly()) { box.replaceChildren(); return; }
   const text = document.createElement('p');
   text.textContent = pending.kind === 'fork'
     ? `Spiel ${pending.gameNumber}: ${pending.remaining} Kreuz(e) offen. Wie geht es nach „${labelOf(pending.at)}“ weiter?`
@@ -242,11 +268,9 @@ function renderCampaign() {
     }
     // Manuell bestätigte Karte (Fahnenfest): der Spieler trägt die Spielnummer selbst ein.
     const input = numberField(`${a.label} (S${a.box})`, computed.unlockGames[a.id] ?? '', (v) => {
-      if (v > 0) campaign.manualUnlocks[a.id] = v;
-      else delete campaign.manualUnlocks[a.id];
-      saveCampaign();
+      commit(setManualUnlock(campaign, a.id, v > 0 ? v : null));
       renderAll();
-    }, false, 'change');
+    }, readOnly() || !campaign, 'change');
     return entryRow(a.label, { checked, input, title: a.condition });
   }));
 
@@ -258,8 +282,25 @@ function renderCampaign() {
     entryRow(`Herz-Kreis ${i + 1}`, { checked: hearts[i] !== undefined, game: hearts[i] })));
 }
 
+function renderHeader() {
+  const finished = readOnly();
+  $('#campaign-name').textContent = campaign ? campaignName(campaign) : 'Neue Kampagne';
+  $('#campaign-start').textContent = campaign ? campaign.startDate : today();
+  $('#campaign-end').textContent = campaign?.endDate ?? '…';
+  $('#sheet').hidden = finished;
+  $('#game-number').textContent = finished ? '(beendet, nur ansehen)' : `Wertungsblatt Spiel ${computed.nextGameNumber}`;
+  $('#end-campaign').hidden = !campaign || finished;
+  $('#delete-campaign').hidden = !campaign;
+  const canEnd = campaign !== null && canEndCampaign(campaign);
+  $('#end-campaign').disabled = !canEnd;
+  $('#end-hint').textContent = campaign && !finished && !canEnd
+    ? 'Beenden geht erst, wenn die offene Frage im Fortschrittsbaum beantwortet ist.'
+    : '';
+}
+
 function renderAll() {
   recompute();
+  renderHeader();
   renderCampaign();
   renderTree();
   // Ein Bonus kann sich durch eine Korrektur ändern: Freigespielt-Status des offenen Blatts anpassen, Eingaben behalten.
@@ -285,14 +326,16 @@ $('#sheet').addEventListener('submit', (e) => {
   if (!confirm('Ist alles eingetragen?')) return;
 
   const finished = sheet;
-  campaign.sheets.push(finished);
-  saveCampaign();
+  // Die Kampagne entsteht mit dem ersten gespeicherten Blatt; gespeicherte Blätter werden nicht mehr geändert.
+  commit(campaign
+    ? addSheet(campaign, finished)
+    : startCampaign({ id: newId(), date: today(), firstSheet: finished }));
   recompute();
   // Freischaltungen am Partieende (Baum und Erfolgskarten), Wirkung ab der nächsten Partie.
   const unlockedNow = Object.entries(computed.unlockGames)
     .filter(([, game]) => game === finished.gameNumber)
     .map(([id]) => ACHIEVEMENTS.find((a) => a.id === id)?.label ?? labelOf(id));
-  sheet = undefined; // das gespeicherte Blatt darf nicht mehr angepasst werden
+  sheet = undefined;
   renderAll();
   newSheet();
   $('#last-unlocks').textContent = unlockedNow.length
@@ -300,15 +343,68 @@ $('#sheet').addEventListener('submit', (e) => {
     : '';
 });
 
-$('#reset').addEventListener('click', () => {
-  if (!confirm('Demo-Kampagne wirklich löschen?')) return;
-  campaign = emptyCampaign();
-  saveCampaign();
+$('#end-campaign').addEventListener('click', () => {
+  if (!canEndCampaign(campaign) || !confirm('Kampagne beenden? Bist du sicher? Danach kann sie nur noch angesehen und gelöscht werden.')) return;
+  commit(endCampaign(campaign, today()));
   sheet = undefined;
   renderAll();
-  newSheet();
-  $('#last-unlocks').textContent = '';
 });
 
-renderAll();
-newSheet();
+$('#delete-campaign').addEventListener('click', () => {
+  if (!confirm('Kampagne wirklich löschen? Bist du sicher? Das lässt sich nicht rückgängig machen.')) return;
+  deleteById(campaign.id);
+});
+
+$('#back').addEventListener('click', showStart);
+$('#new-campaign').addEventListener('click', () => openCampaign(null));
+
+// ---- Startbildschirm ----
+
+function deleteById(id) {
+  store.campaigns = deleteCampaign(store.campaigns, id);
+  saveStore();
+  showStart();
+}
+
+function campaignCard(entry, finished) {
+  const card = document.createElement('div');
+  card.className = 'campaign-card';
+  const text = document.createElement('span');
+  text.textContent = `${entry.name} · ${entry.startDate}${entry.endDate ? ` bis ${entry.endDate}` : ''} · ${entry.games} Spiel${entry.games === 1 ? '' : 'e'}`;
+  const open = Object.assign(document.createElement('button'), {
+    type: 'button', textContent: finished ? 'Ansehen' : 'Fortsetzen',
+    onclick: () => openCampaign(entry.id),
+  });
+  const remove = Object.assign(document.createElement('button'), {
+    type: 'button', textContent: 'Löschen',
+    onclick: () => {
+      if (confirm(`Kampagne „${entry.name}“ wirklich löschen? Bist du sicher? Das lässt sich nicht rückgängig machen.`)) deleteById(entry.id);
+    },
+  });
+  card.append(text, open, remove);
+  return card;
+}
+
+function showStart() {
+  campaign = null;
+  sheet = undefined;
+  const { running, finished } = campaignOverview(store.campaigns);
+  const none = (text) => Object.assign(document.createElement('p'), { className: 'hint', textContent: text });
+  $('#campaigns-running').replaceChildren(...(running.length ? running.map((c) => campaignCard(c, false)) : [none('Keine laufende Kampagne.')]));
+  $('#campaigns-finished').replaceChildren(...(finished.length ? finished.map((c) => campaignCard(c, true)) : [none('Keine beendete Kampagne.')]));
+  $('#campaign-screen').hidden = true;
+  $('#start-screen').hidden = false;
+}
+
+/** Öffnet eine Kampagne; null = neue Kampagne mit leerem Blatt für Spiel 1. */
+function openCampaign(id) {
+  campaign = id === null ? null : store.campaigns.find((c) => c.id === id);
+  sheet = undefined;
+  $('#last-unlocks').textContent = '';
+  $('#start-screen').hidden = true;
+  $('#campaign-screen').hidden = false;
+  renderAll();
+  if (!readOnly()) newSheet();
+}
+
+showStart();

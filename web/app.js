@@ -61,7 +61,8 @@ let computed = computeCampaign(NO_DATA);
 let sheet;
 
 const $ = (sel) => document.querySelector(sel);
-const today = () => new Date().toISOString().slice(0, 10);
+// Lokales Datum (toISOString liefert UTC und wäre kurz nach Mitternacht noch der Vortag).
+const today = () => new Date().toLocaleDateString('sv-SE');
 const readOnly = () => campaign !== null && isFinished(campaign);
 const recompute = () => { computed = computeCampaign(campaign ?? NO_DATA); };
 const validate = () => {
@@ -288,6 +289,7 @@ function renderHeader() {
   $('#campaign-start').textContent = campaign ? campaign.startDate : today();
   $('#campaign-end').textContent = campaign?.endDate ?? '…';
   $('#sheet').hidden = finished;
+  if (finished) $('#game-date').textContent = '–';
   $('#game-number').textContent = finished ? '(beendet, nur ansehen)' : `Wertungsblatt Spiel ${computed.nextGameNumber}`;
   $('#end-campaign').hidden = !campaign || finished;
   $('#delete-campaign').hidden = !campaign;

@@ -134,6 +134,14 @@ test('Eine laufende Kampagne wird beim erneuten Speichern fortgeschrieben, nicht
   assert.deepStrictEqual(stored, [next]);
 });
 
+test('Keine Versionsprüfung: Bei einer laufenden Kampagne gilt das letzte Speichern', async () => {
+  const campaign = basisCampaign('letztes');
+  await put(campaign);
+  await put(setManualUnlock(campaign, 'fahnenfest', 1));
+  assert.equal((await put(campaign)).status, 200, 'auch ein älterer Stand wird angenommen');
+  assert.deepStrictEqual(await load(campaign.id), campaign);
+});
+
 test('Eine Kampagne übersteht Neuladen und Neustart des Servers', async () => {
   const campaign = basisCampaign('neustart');
   await put(campaign);

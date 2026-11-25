@@ -26,6 +26,9 @@ label.players { margin-bottom: 1rem; }
 label.inline { flex-direction: row; align-items: center; gap: 0.4rem; }
 input[type="number"], input[type="text"] { box-sizing: border-box; width: 100%; min-width: 0; font-size: 1rem; padding: 0.35rem; border: 1px solid #ccc4b4; border-radius: 4px; }
 input:disabled { background: #eee9de; }
+select { width: 100%; min-width: 0; font-size: 1rem; padding: 0.3rem; border: 1px solid #ccc4b4; border-radius: 4px; }
+select:disabled { background: #eee9de; }
+.unlock .hint { margin: 0; font-size: 0.75rem; }
 
 .bonuses { display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); gap: 0.5rem; }
 .bonus { display: flex; align-items: flex-end; gap: 0.5rem; }

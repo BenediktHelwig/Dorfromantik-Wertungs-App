@@ -360,15 +360,24 @@ export function openSakura(host, env) {
       const game = computed.unlockGames[a.id];
       const check = el('input', { type: 'checkbox', checked: received(a), disabled: true });
       if (a.kind === 'manual') {
-        const input = numberField(a.label, game ?? '', (v) => { commit(setManualUnlock(campaign, a.id, v > 0 ? v : null)); renderAll(); },
-          { disabled: readOnly() || !campaign || !received(a), event: 'change' });
-        return el('div', { className: 'unlock', title: a.condition }, check, input);
+        const options = computed.manualOptions[a.id];
+        const select = el('select', {}, el('option', { value: '', textContent: '–' }),
+          ...options.map((n) => el('option', { value: String(n), textContent: `Spiel ${n}` })));
+        select.value = String(game ?? '');
+        select.disabled = readOnly() || !campaign || options.length === 0;
+        select.addEventListener('change', () => {
+          commit(setManualUnlock(campaign, a.id, select.value === '' ? null : Number(select.value)));
+          renderAll();
+        });
+        return el('div', { className: 'unlock', title: a.condition }, check,
+          el('label', { textContent: `${a.label}: erfüllt in Spiel` }, select,
+            received(a) && options.length === 0 && el('span', { className: 'hint', textContent: 'erst nach einer weiteren gespeicherten Partie' })));
       }
       return el('div', { className: 'unlock', title: a.condition }, check, el('span', { className: 'entry', textContent: a.label }),
         el('span', { className: 'game', textContent: game ?? '–' }));
     });
     return el('section', {}, el('h2', { textContent: 'Eure Erfolge' }),
-      el('p', { className: 'hint', textContent: 'Häkchen = Karte erhalten. Zahl = Spielnummer der Freischaltung, wirkt ab dem nächsten Spiel. Fahrt mit der Maus über einen Eintrag für die Aufgabe. Badende Affen, Sackgasse usw. trägst du selbst ein.' }),
+      el('p', { className: 'hint', textContent: 'Häkchen = Karte erhalten. Zahl = Spielnummer der Freischaltung, wirkt ab dem nächsten Spiel. Fahrt mit der Maus über einen Eintrag für die Aufgabe. Bei Karten mit Auswahlfeld prüft die App die Aufgabe nicht selbst: Wählt die Partie, in der ihr sie erfüllt habt.' }),
       ...[1, 2, 3, 4, 5, 6].flatMap((box) => [el('h3', { textContent: `Box ${box}${box === 4 ? ' (Aufbewahrung, Inhalt über den Bogen)' : ''}` }), el('div', { className: 'unlocks' }, ...rows(box))]),
       el('p', { className: 'hint', textContent: computed.collectorOpen || !campaign?.collector ? '' : `Blütensammler: ${LABEL.get(campaign.collector)}` }));
   }

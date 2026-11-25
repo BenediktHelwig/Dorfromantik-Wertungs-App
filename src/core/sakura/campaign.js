@@ -47,6 +47,8 @@ export function computeSakuraCampaign({
   const flippable = {};
   let bigStarGame = null;
   let trees = { path: walk('path', []), star: walk('star', []) };
+  // Handkarte -> gespeicherte Partien, in denen eine manuelle Erfüllung zählt (für die Auswahl in der Oberfläche).
+  const manualOptions = Object.fromEntries([...MANUAL_CARDS].map((id) => [id, []]));
 
   const before = (game, n) => Number.isInteger(game) && game < n;
   const receivedAt = (n) => {
@@ -112,8 +114,10 @@ export function computeSakuraCampaign({
     if (boxGames[3] !== undefined) unlockGames.kirschblueten = boxGames[3];
     for (const id of applied.fulfilled) unlockGames[id] ??= n;
     const received = receivedAt(n);
-    for (const [id, game] of Object.entries(manualUnlocks)) {
-      if (game === n && MANUAL_CARDS.has(id) && received.has(id)) unlockGames[id] ??= n;
+    for (const id of MANUAL_CARDS) {
+      if (!received.has(id)) continue;
+      manualOptions[id].push(n);
+      if (manualUnlocks[id] === n) unlockGames[id] ??= n;
     }
     if (unlockGames.meisterpruefung !== undefined) boxGames[5] = unlockGames.meisterpruefung;
     if (unlockGames.badendeAffen !== undefined) boxGames[6] = unlockGames.badendeAffen;
@@ -145,6 +149,7 @@ export function computeSakuraCampaign({
     sheets: normalized,
     trees,
     unlockGames,
+    manualOptions,
     boxGames,
     received: receivedAt(next),
     unlockedForNext: { bonusIds: unlockedBonusIdsAt(next), columns: LOCKABLE_COLUMNS.filter((c) => columnsAt(next)[c]) },

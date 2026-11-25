@@ -279,7 +279,7 @@ test('Die Seite meldet den Service Worker der App mit dem Scope des Manifests an
   // Die gebaute Oberfläche meldet ihn mit genau diesen beiden Angaben an.
   const script = html.match(/<script[^>]+src="([^"]*dorfromantik-main\.js[^"]*)"/)[1].replaceAll('&amp;', '&');
   const bundle = await (await call(script)).text();
-  assert.match(bundle, /workerUrl:(\w+),scope:(\w+)[\s\S]*serviceWorker\.register\(\1,\{scope:\2\}\)/);
+  assert.match(bundle, /workerUrl:([\w$]+),scope:([\w$]+)[\s\S]*serviceWorker\.register\(\1,\{scope:\2\}\)/); // Namen sind minifiziert
 });
 
 test('Die Sicherheitsrichtlinie erlaubt Service Worker und Manifest', async () => {

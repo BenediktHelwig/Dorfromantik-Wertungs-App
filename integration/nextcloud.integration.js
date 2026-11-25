@@ -267,6 +267,21 @@ test('Der Service Worker ist als JavaScript abrufbar und darf die ganze App abde
   assert.match(await response.text(), /Keine Verbindung zur Nextcloud/);
 });
 
+test('Die Seite meldet den Service Worker der App mit dem Scope des Manifests an', async () => {
+  const { html } = await page();
+  const attribute = (name) => html.match(new RegExp(`id="dorfromantik-app"[^>]*\\sdata-${name}="([^"]*)"`))?.[1];
+  const manifest = await (await call(`${APP}/manifest.webmanifest`, { as: null })).json();
+  assert.equal(attribute('scope'), manifest.scope);
+  assert.equal(attribute('worker-url'), `${APP}/sw.js`);
+  const worker = await call(attribute('worker-url'), { as: null });
+  assert.equal(worker.status, 200);
+  assert.equal(worker.headers.get('service-worker-allowed'), attribute('scope'), 'dieser Scope ist erlaubt');
+  // Die gebaute Oberfläche meldet ihn mit genau diesen beiden Angaben an.
+  const script = html.match(/<script[^>]+src="([^"]*dorfromantik-main\.js[^"]*)"/)[1].replaceAll('&amp;', '&');
+  const bundle = await (await call(script)).text();
+  assert.match(bundle, /workerUrl:(\w+),scope:(\w+)[\s\S]*serviceWorker\.register\(\1,\{scope:\2\}\)/);
+});
+
 test('Die Sicherheitsrichtlinie erlaubt Service Worker und Manifest', async () => {
   const { response } = await page();
   const policy = response.headers.get('content-security-policy');

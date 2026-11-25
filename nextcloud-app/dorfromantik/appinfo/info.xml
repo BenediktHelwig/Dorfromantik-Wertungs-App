@@ -14,4 +14,11 @@
         <php min-version="8.1"/>
         <nextcloud min-version="31" max-version="32"/>
     </dependencies>
+    <navigations>
+        <navigation>
+            <name>Dorfromantik</name>
+            <route>dorfromantik.page.index</route>
+            <icon>app.svg</icon>
+        </navigation>
+    </navigations>
 </info>

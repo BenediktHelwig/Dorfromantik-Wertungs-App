@@ -1,0 +1,8 @@
+{
+  "name": "dorfromantik-nextcloud",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "echo Oberflaeche noch nicht vorhanden"
+  }
+}

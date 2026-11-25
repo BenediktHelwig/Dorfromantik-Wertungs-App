@@ -13,6 +13,7 @@ import { startCampaign, setGameEnd, endCampaign, setManualUnlock } from '../src/
 
 const BASE = process.env.NC_URL ?? 'http://localhost:8081';
 const APP = '/index.php/apps/dorfromantik';
+const APP_PATH = /^(\/index\.php)?\/apps\/dorfromantik\/$/;
 const ADMIN = { user: 'admin', password: 'Dorf-Test-Admin-2026!' };
 const SECOND = { user: 'familie', password: 'Dorf-Test-Familie-2026!' };
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -52,7 +53,7 @@ const load = async (id, options) => (await list(options)).find((c) => c.id === i
 function basisCampaign(id) {
   const sheet = createScoresheet({ gameNumber: 1, date: '2026-11-25' });
   sheet.players = 'Anna, Ben (Ä ö ß)';
-  sheet.orders.wald = 210;
+  sheet.orders.wald = 20; // wenige Kreuze: keine offene Frage, die Kampagne darf beendet werden
   return startCampaign({ id: `${id}-${RUN}`, date: '2026-11-25', firstSheet: sheet });
 }
 
@@ -100,8 +101,9 @@ test('Die Seite der App lädt mit der gebauten Vue-Oberfläche', async () => {
 
 test('Ohne Anmeldung gibt es keinen Zugriff auf die Kampagnen', async () => {
   const campaign = basisCampaign('anonym');
-  assert.equal((await call(`${APP}/api/campaigns`, { as: null })).status, 401);
-  assert.equal((await put(campaign, { as: null })).status, 401);
+  const json = { as: null, headers: { Accept: 'application/json' } };
+  assert.equal((await call(`${APP}/api/campaigns`, json)).status, 401);
+  assert.equal((await put(campaign, json)).status, 401);
   assert.equal(await load(campaign.id), undefined);
 });
 
@@ -234,7 +236,9 @@ test('Das Manifest ist ohne Anmeldung abrufbar und installierbar', async () => {
   const start = new URL(manifest.start_url, url);
   const scope = new URL(manifest.scope, url);
   assert.ok(start.pathname.startsWith(scope.pathname), 'start_url liegt im scope');
-  assert.equal(start.pathname, `${APP}/`);
+  // Mit oder ohne index.php, je nach "schönen URLs" des Servers; die Adresse muss die App liefern.
+  assert.match(start.pathname, APP_PATH);
+  assert.match(await (await call(start)).text(), /id="dorfromantik-app"/);
   for (const size of [192, 512]) {
     const icon = manifest.icons.find((i) => i.sizes === `${size}x${size}` && i.type === 'image/png');
     assert.ok(icon, `Icon ${size}`);
@@ -250,8 +254,8 @@ test('Der Service Worker ist als JavaScript abrufbar und darf die ganze App abde
   const response = await call(`${APP}/sw.js`, { as: null });
   assert.equal(response.status, 200);
   assert.match(response.headers.get('content-type'), /javascript/);
-  const allowed = response.headers.get('service-worker-allowed');
-  assert.ok(allowed && `${APP}/`.startsWith(allowed));
+  const manifest = await (await call(`${APP}/manifest.webmanifest`, { as: null })).json();
+  assert.equal(response.headers.get('service-worker-allowed'), manifest.scope, 'deckt Startadresse und Scope ab');
   assert.match(await response.text(), /Keine Verbindung zur Nextcloud/);
 });
 

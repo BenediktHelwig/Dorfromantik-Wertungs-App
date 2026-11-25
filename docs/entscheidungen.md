@@ -174,3 +174,41 @@ Diese Punkte füllen Lücken im Text. Weichen sie von deinem Spiel ab, bitte mel
   Blüten nach dem Ende gingen nur noch in Punkte oder Stern 30. Stern 30 bleibt nur mit 30 Blüten auf einmal und
   erst nach dem gewählten Weg möglich.
 - **Grund:** Antwort von Benedikt; sonst blieben Sumoringer und Reiskuchen bzw. Reisbäuerin und Umtrunk unerreichbar.
+
+## 25.11.2026 – Nextcloud-App und PWA (Schritt 4)
+
+### 1. Kampagnen gemeinsam für alle
+- **Regel:** Wer sieht die Kampagnen in Nextcloud, wo jede Person ihren eigenen Login hat?
+- **Entscheidung:** Alle Nutzer der Instanz sehen und bearbeiten dieselben Kampagnen. Auf die Familie wird die App über
+  die Nextcloud-Einstellung „Für Gruppen aktivieren“ beschränkt.
+- **Grund:** Antwort von Benedikt.
+
+### 2. Nur online
+- **Regel:** Wie verhält sich die PWA ohne Verbindung zum Heimnetz bzw. VPN?
+- **Entscheidung:** Der Service Worker speichert die Oberfläche zwischen. Ohne Verbindung erscheint „Keine Verbindung zur
+  Nextcloud“, gespeichert wird nur auf dem Server.
+- **Grund:** Antwort von Benedikt.
+
+### 3. Keine Übernahme aus dem Prototyp
+- **Entscheidung:** Kampagnen aus dem Browser-Speicher des Prototyps werden nicht übernommen, Nextcloud beginnt leer.
+- **Grund:** Antwort von Benedikt.
+
+### 4. Kein gleichzeitiges Bearbeiten
+- **Regel:** Was gilt, wenn zwei Geräte dieselbe Kampagne bearbeiten?
+- **Entscheidung:** Der Fall ist ausgeschlossen: Es wird immer nur ein Gerät genutzt, Zugriff haben nur zwei Personen.
+  Es gibt keine Versionsprüfung, das letzte Speichern gilt.
+- **Grund:** Antwort von Benedikt.
+
+### 5. Zielsystem und Geräte
+- **Entscheidung:** Ziel ist die vorhandene Nextcloud 31.0.5. Sie hat noch kein HTTPS; die PWA wird vollständig gebaut,
+  HTTPS richtet Benedikt selbst ein. `docker compose` dient nur Entwicklung und Integrationstests. Genutzt werden iPhone
+  und Android.
+- **Grund:** Antwort von Benedikt.
+
+### Technische Auslegung (keine Spielregel; bei Abweichung bitte melden)
+- **Eigene Seite ohne Nextcloud-Rahmen:** Nextcloud setzt im Standard-Rahmen sein eigenes Manifest und
+  Home-Bildschirm-Icon vor alle Angaben einer App. Damit die PWA die Dorfromantik-App installiert, wird die Seite
+  eigenständig ausgeliefert, mit einem Link zurück zur Nextcloud.
+- **Der Server prüft nur das Rohdaten-Prinzip:** Er nimmt genau die Felder aus `src/core/campaigns.js` an und lehnt
+  Änderungen an beendeten Kampagnen ab. Die Spielregeln prüft der Kern in der Oberfläche; Inhalte der Blätter und
+  Entscheidungen prüft der Server nicht.

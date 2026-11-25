@@ -276,3 +276,38 @@ test('Aufgaben werden erst ab der Partie nach dem Erhalt der Karte geprüft (Zei
   assert.equal(c.boxGames[3], 1);
   assert.equal(c.unlockGames.gourmet, 2);
 });
+
+// Auswahl für die Handkarten: nur Partien, in denen eine manuelle Erfüllung auch zählt (Wirkung ab N+1).
+test('manualOptions: leer, solange die Box erst in der letzten gespeicherten Partie geöffnet wurde', () => {
+  const c = computeSakuraCampaign(boxThree());
+  assert.equal(c.boxGames[2], 1);
+  assert.deepEqual(c.manualOptions.sackgasse, []);
+  assert.deepEqual(c.manualOptions.staudamm, []);
+});
+
+test('manualOptions: nennt die gespeicherten Folgepartien, nicht die Partie der Box-Öffnung', () => {
+  const c = computeSakuraCampaign({ ...boxThree([sheet(2, 100), sheet(3, 100)]), collector: 'gourmet' });
+  assert.deepEqual(c.manualOptions.sackgasse, [2, 3]);
+  assert.deepEqual(c.manualOptions.staudamm, [2, 3]);
+  assert.deepEqual(c.manualOptions.bunteFahne, []);
+});
+
+test('manualOptions: Badende Affen erst nach den Partien, die auf Heiße Quellen folgen', () => {
+  const games = [sheet(1, 500), sheet(2, 500), sheet(3, 100)];
+  const c = computeSakuraCampaign({ ...decide(raw(games), 'See', 'Brücken'), collector: 'gourmet' });
+  assert.equal(c.unlockGames.heisseQuellen, 2);
+  assert.deepEqual(c.manualOptions.badendeAffen, [3]);
+});
+
+test('manualOptions: jede angebotene Partie wird beim Eintragen übernommen', () => {
+  const games = [sheet(1, 500), sheet(2, 500), sheet(3, 100), sheet(4, 100)];
+  const base = { ...decide(raw(games), 'See', 'Brücken'), collector: 'gourmet' };
+  const offered = Object.entries(computeSakuraCampaign(base).manualOptions);
+  assert.ok(offered.some(([, list]) => list.length > 0));
+  for (const [id, list] of offered) {
+    for (const game of list) {
+      const c = computeSakuraCampaign({ ...base, manualUnlocks: { [id]: game } });
+      assert.equal(c.unlockGames[id], game, `${id} in Spiel ${game}`);
+    }
+  }
+});

@@ -12,14 +12,40 @@
     Bitte im Projektordner <code>npm start</code> ausführen und <a href="http://localhost:8080/web/">http://localhost:8080/web/</a> öffnen.
   </p>
   <script>if (location.protocol === 'file:') document.getElementById('file-warning').hidden = false;</script>
+  <div id="start-screen" hidden>
+    <header><h1>Dorfromantik – Kampagnen</h1><p class="meta">Basisspiel und Sakura · Prototyp</p></header>
+    <section>
+      <button type="button" id="new-campaign">Neue Kampagne starten (Basisspiel)</button>
+      <button type="button" id="new-sakura">Neue Kampagne starten (Sakura)</button>
+    </section>
+    <section>
+      <h2>Laufende Kampagnen</h2>
+      <div id="campaigns-running" class="campaigns"></div>
+    </section>
+    <section>
+      <h2>Beendete Kampagnen</h2>
+      <p class="hint">Nur ansehen oder löschen.</p>
+      <div id="campaigns-finished" class="campaigns"></div>
+    </section>
+  </div>
+
+  <div id="sakura-screen" hidden></div>
+
+  <div id="campaign-screen" hidden>
   <header>
-    <h1>Wertungsblatt <span id="game-number"></span></h1>
-    <p class="meta">Datum: <span id="game-date"></span> · Basisspiel · Prototyp</p>
+    <button type="button" id="back">← Kampagnen</button>
+    <h1><span id="campaign-name"></span> · <span id="game-number"></span></h1>
+    <p class="meta">Kampagne gespielt von <span id="campaign-start"></span> bis <span id="campaign-end">…</span> · Datum dieses Blatts: <span id="game-date"></span> · Basisspiel · Prototyp</p>
+    <p id="campaign-actions" class="actions">
+      <button type="button" id="end-campaign">Kampagne beenden</button>
+      <button type="button" id="delete-campaign">Kampagne löschen</button>
+    </p>
+    <p id="end-hint" class="hint"></p>
   </header>
 
   <main>
     <form id="sheet" novalidate>
-      <label class="players">Mitspielende <input name="players" type="text" autocomplete="off"></label>
+      <label class="players">Mitspielende <input name="players" type="text" autocomplete="off"> <span class="hint" id="players-hint"></span></label>
 
       <section>
         <h2>Aufträge (B)</h2>
@@ -73,10 +99,10 @@
         <h3>Herz-Kreise</h3>
         <p class="hint">Spielnummer, in der der Kreis ausgekreuzt wurde. Zählt erst, wenn Herzenswünsche erfüllt ist.</p>
         <div id="unlocks-hearts" class="unlocks"></div>
-        <button type="button" id="reset">Demo-Kampagne zurücksetzen</button>
       </section>
     </aside>
   </main>
+  </div>
 
   <script type="module" src="app.js"></script>
 </body>

@@ -43,11 +43,61 @@ export const HIGHSCORE_BASIS = Object.freeze([
 /**
  * Zeile der Highscoreliste für ein Ergebnis (abgerundet).
  * @param {number} total Gesamtergebnis (>= 0)
+ * @param {readonly HighscoreRow[]} [table] Liste der Variante, Standard: Basisspiel
  * @returns {HighscoreRow}
  */
-export function highscoreRow(total) {
+export function highscoreRow(total, table = HIGHSCORE_BASIS) {
   if (!Number.isInteger(total) || total < 0) {
     throw new RangeError(`Ungültiges Ergebnis: ${total}`);
   }
-  return HIGHSCORE_BASIS.find((row) => total >= row.min);
+  return table.find((row) => total >= row.min);
 }
+
+/**
+ * Highscoreliste der Variante Sakura (Entscheidung 23.11.2026, Schritt 3), vom Kampagnenbogen.
+ * Keine leeren Zusatzzeilen: ab 500 bleibt das Ergebnis in Zeile 500 (16 Kreuze).
+ * @type {readonly HighscoreRow[]} absteigend sortiert
+ */
+export const HIGHSCORE_SAKURA = Object.freeze([
+  { min: 500, title: null, crosses: 16 },
+  { min: 490, title: null, crosses: 16 },
+  { min: 480, title: null, crosses: 16 },
+  { min: 470, title: null, crosses: 16 },
+  { min: 460, title: null, crosses: 16 },
+  { min: 450, title: 'Kaiser', crosses: 16 },
+  { min: 440, title: 'Kaiserin', crosses: 16 },
+  { min: 430, title: 'Prinzessin', crosses: 15 },
+  { min: 420, title: 'Prinz', crosses: 15 },
+  { min: 410, title: 'Shogun', crosses: 15 },
+  { min: 400, title: 'Priester', crosses: 14 },
+  { min: 390, title: 'Präfektin', crosses: 14 },
+  { min: 380, title: 'Samurai', crosses: 14 },
+  { min: 370, title: 'Geisha', crosses: 13 },
+  { min: 360, title: 'Ronin', crosses: 13 },
+  { min: 350, title: 'Tempeldiener', crosses: 13 },
+  { min: 340, title: 'Provinzbeamtin', crosses: 12 },
+  { min: 330, title: 'Harfenspielerin', crosses: 12 },
+  { min: 320, title: 'Wandermönch', crosses: 12 },
+  { min: 310, title: 'Architektin', crosses: 11 },
+  { min: 300, title: 'Teebäuerin', crosses: 11 },
+  { min: 290, title: 'Algenzüchterin', crosses: 11 },
+  { min: 280, title: 'Perlentaucher', crosses: 10 },
+  { min: 270, title: 'Seidenweberin', crosses: 10 },
+  { min: 260, title: 'Salzsieder', crosses: 9 },
+  { min: 250, title: 'Waffenschmied', crosses: 9 },
+  { min: 240, title: 'Tuschemalerin', crosses: 8 },
+  { min: 230, title: 'Maskenschnitzerin', crosses: 8 },
+  { min: 220, title: 'Origami-Künstlerin', crosses: 7 },
+  { min: 210, title: 'Glockengießer', crosses: 7 },
+  { min: 200, title: 'Tatamiflechterin', crosses: 6 },
+  { min: 190, title: 'Zubermacher', crosses: 6 },
+  { min: 180, title: 'Lastkahnkapitän', crosses: 5 },
+  { min: 170, title: 'Feuerwerkerin', crosses: 5 },
+  { min: 160, title: 'Tofuverkäuferin', crosses: 4 },
+  { min: 150, title: 'Flötenspielerin', crosses: 4 },
+  { min: 140, title: 'Rettichhändler', crosses: 3 },
+  { min: 130, title: 'Bambusflößer', crosses: 3 },
+  { min: 120, title: 'Puppenspielerin', crosses: 2 },
+  { min: 110, title: 'Rikschafahrer', crosses: 2 },
+  { min: 0, title: 'Lastenträger', crosses: 1 },
+]);

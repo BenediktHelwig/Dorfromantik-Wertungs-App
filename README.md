@@ -2,15 +2,18 @@
 
 Familien-App zur Wertung von Kampagnen des Brettspiels **Dorfromantik** (Pegasus). Ziel ist eine Nextcloud-App, die im Heimnetz (von außen per VPN) läuft und aufs Handy als PWA kommt. Kein App-Store, keine Accounts.
 
-**Stand: Prototyp 0.2** – Wertungsmaske des Basisspiels und Fortschrittsbaum mit getesteter Rechenlogik. Noch ohne Kampagnenverwaltung, Nextcloud und Variante Sakura.
+**Stand: 0.1.0** – Nextcloud-App mit PWA für Basisspiel und Sakura: Kampagnenverwaltung, Wertungsblätter, Fortschrittsbaum und Erfolge. Einrichtung in der eigenen Nextcloud: [INSTALL.md](INSTALL.md). Auf echten Handys und auf dem Heimserver noch nicht geprüft.
 
 ## Schnellstart
 
-Voraussetzung: Node.js ≥ 20. Es gibt keine Abhängigkeiten, `npm install` ist nicht nötig.
+Voraussetzung: Node.js ≥ 20. Rechenlogik, Tests und Prototyp haben keine Abhängigkeiten, `npm install` ist nicht nötig. Die Nextcloud-App baut und testet ihr mit Docker (siehe [INSTALL.md](INSTALL.md)).
 
 ```bash
 npm test     # Unit-Tests (node:test)
 npm start    # Prototyp unter http://localhost:8080/web/
+
+docker compose up -d --wait   # Nextcloud mit der App unter http://localhost:8081
+npm run test:integration      # Integrationstests gegen diesen Container
 ```
 
 ## Aufbau
@@ -25,12 +28,15 @@ src/core/        Rechenlogik ohne UI, voll getestet
   progressTree.js Fortschrittsbaum: Pfadlogik (Gabelungen, Überspringen, Restfelder, Verfall)
   graph-basis.json Graph des Basisspiels (Sechsecke, Abschnitte, Herz-Kreise, Positionen für die Zeichnung)
 test/            Tests je Modul
-web/             Prototyp der Wertungsmaske und des Fortschrittsbaums (HTML/CSS/JS, ES-Module)
+nextcloud-app/   Nextcloud-App: PHP-Backend (lib/), Vue-Oberfläche (src/), PWA (pwa/, img/)
+integration/     Integrationstests gegen den Nextcloud-Container
+nextcloud/       Einrichtung des Entwicklungs-Containers
+web/             Prototyp der Oberfläche (HTML/CSS/JS, ES-Module)
 scripts/serve.js Minimaler statischer Server für den Prototyp
 docs/            Spezifikation, Anforderungen, Entscheidungen (entscheidungen.md hat Vorrang)
 ```
 
-Grundsatz: Gespeichert werden nur Rohdaten (Wertungsblätter und Entscheidungen der Spieler). Alles Abgeleitete wird daraus neu berechnet. So bleiben nachträgliche Korrekturen einfach.
+Grundsatz: Gespeichert werden nur Rohdaten (Wertungsblätter und Entscheidungen der Spieler). Alles Abgeleitete wird daraus neu berechnet.
 
 ## Prototyp ausprobieren
 

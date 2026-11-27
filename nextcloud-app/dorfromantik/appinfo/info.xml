@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<info xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
+    <id>dorfromantik</id>
+    <name>Dorfromantik</name>
+    <summary>Wertung und Kampagnen für das Brettspiel Dorfromantik</summary>
+    <description>Wertungsblätter, Fortschrittsbaum und Erfolge für Kampagnen im Basisspiel und in der Variante Sakura.</description>
+    <version>0.1.0</version>
+    <licence>agpl</licence>
+    <author>Benedikt Helwig</author>
+    <namespace>Dorfromantik</namespace>
+    <category>games</category>
+    <dependencies>
+        <php min-version="8.1"/>
+        <nextcloud min-version="31" max-version="32"/>
+    </dependencies>
+    <navigations>
+        <navigation>
+            <name>Dorfromantik</name>
+            <route>dorfromantik.page.index</route>
+            <icon>app.svg</icon>
+        </navigation>
+    </navigations>
+</info>

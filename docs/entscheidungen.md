@@ -54,3 +54,161 @@ Diese Punkte füllen Lücken im Text. Weichen sie von deinem Spiel ab, bitte mel
 - **Entscheidungen hängen an der Reihenfolge der Fragen**, nicht an der Spielnummer. Wird ein Blatt
   korrigiert und passt eine Entscheidung nicht mehr, fragt die App neu (Warnung vor dem Speichern
   folgt in Schritt 2).
+
+## 23.11.2026 – Kampagnenverwaltung Basisspiel (Schritt 2)
+
+### 1. Keine Korrektur gespeicherter Wertungsblätter
+- **Regel:** Darf ein gespeichertes Wertungsblatt nachträglich geändert werden?
+- **Entscheidung:** Nein. Die Rückfrage „Ist alles eingetragen?“ vor dem Speichern ist die einzige
+  Absicherung. Der Abschnitt „Nachträgliche Korrektur geschlossener Wertungsblätter (erlaubt)“ in
+  `app-anforderungen.md` entfällt, ebenso die dort beschriebene Warnung. Die Ankündigung „Warnung vor
+  dem Speichern folgt in Schritt 2“ weiter oben ist damit hinfällig. Das Rohdaten-Prinzip bleibt, alles
+  Abgeleitete wird weiter neu berechnet.
+- **Grund:** Antwort von Benedikt.
+
+### 2. Die Kampagne entsteht mit dem ersten gespeicherten Wertungsblatt
+- **Regel:** Wann wird eine Kampagne angelegt, woher kommt ihr Name?
+- **Entscheidung:** „Neue Kampagne starten“ öffnet ein leeres Blatt für Spiel 1, erst „Speichern“ legt die
+  Kampagne an (Beginn = Datum des Speicherns). Der Name sind die Mitspielenden aus Spiel 1, dort Pflicht.
+  Ab Spiel 2 werden sie fest übernommen und sind nicht änderbar. Der Startbildschirm zeigt diese Namen.
+- **Grund:** Realer Ablauf: Benedikt spielt zuerst, legt die Kampagne am Partieende an und trägt die Wertung ein.
+
+### 3. Beenden und Löschen
+- **Entscheidung:** „Kampagne beenden“ mit „Bist du sicher?“ trägt das Enddatum ein und ist gesperrt, solange
+  im Fortschrittsbaum eine Frage offen ist (erst beantworten). Danach nur ansehen und löschen. Löschen ist bei
+  laufenden und beendeten Kampagnen möglich, immer mit Sicherheitsabfrage.
+- **Grund:** Antwort von Benedikt; die Sperre bei offener Frage ist die empfohlene Auslegung.
+
+## 23.11.2026 – Variante Sakura (Schritt 3)
+
+### 1. Highscoreliste Sakura
+- **Regel:** Wie lautet die vollständige Highscoreliste Sakura?
+- **Entscheidung:** Vom Foto des Kampagnenbogens (Punkte → Titel → Kreuze): 0–100 Lastenträger 1 · 110 Rikschafahrer 2 ·
+  120 Puppenspielerin 2 · 130 Bambusflößer 3 · 140 Rettichhändler 3 · 150 Flötenspielerin 4 · 160 Tofuverkäuferin 4 ·
+  170 Feuerwerkerin 5 · 180 Lastkahnkapitän 5 · 190 Zubermacher 6 · 200 Tatamiflechterin 6 · 210 Glockengießer 7 ·
+  220 Origami-Künstlerin 7 · 230 Maskenschnitzerin 8 · 240 Tuschemalerin 8 · 250 Waffenschmied 9 · 260 Salzsieder 9 ·
+  270 Seidenweberin 10 · 280 Perlentaucher 10 · 290 Algenzüchterin 11 · 300 Teebäuerin 11 · 310 Architektin 11 ·
+  320 Wandermönch 12 · 330 Harfenspielerin 12 · 340 Provinzbeamtin 12 · 350 Tempeldiener 13 · 360 Ronin 13 · 370 Geisha 13 ·
+  380 Samurai 14 · 390 Präfektin 14 · 400 Priester 14 · 410 Shogun 15 · 420 Prinz 15 · 430 Prinzessin 15 · 440 Kaiserin 16 ·
+  450 Kaiser 16 · 460, 470, 480, 490, 500 ohne Titel je 16. Abrunden wie im Basisspiel, ab 500 bleibt es in Zeile 500.
+- **Grund:** Die Docs nannten nur Anfang und Ende der Liste.
+
+### 2. Boxen 4 bis 6
+- **Regel:** Wie kommen die Karten der Boxen 4 bis 6 ins Spiel?
+- **Entscheidung:** Box 4 ist nur Aufbewahrung, ihr Inhalt wird über den Bogen freigeschaltet. Mit der Freischaltung von
+  „Heiße Quellen“ erhält man „Badende Affen“. Ist die Meisterprüfung erfüllt, wird Box 5 geöffnet (Dekret des Kaisers,
+  Dorf & Reis, Kirschbaum & Dorf, Reis & Kirschbaum). Ist „Badende Affen“ erfüllt, wird Box 6 geöffnet (Bunte Fahne, Daimyo,
+  Kleine Wolken, Ochsenkarren und Handelsposten, Poet, Schiff und Anlegestelle).
+- **Grund:** Antwort von Benedikt.
+
+### 3. Zeitregel wie im Basisspiel
+- **Entscheidung:** Alles, was in Partie N ausgekreuzt, erhalten oder erfüllt wird, wirkt ab Partie N+1: Bonusfeld aktiv,
+  Aufgabe prüfbar, Blüten sammelbar, Spalten offen.
+
+### 4. Kalligraph
+- **Regel:** Wie viele Felder bringt der Kalligraph?
+- **Entscheidung:** Kartentext: Ist der Kalligraph am Spielende komplett von Plättchen umgeben, darf 1 zusätzliches Feld
+  (kein Blütenfeld) ausgekreuzt werden, dazu je 10 abgegebene Blüten 1 weiteres Feld (20 Blüten = 3 Kreuze). Alle Felder
+  liegen auf dem Kreispfad, alles ist freiwillig. Das ersetzt die Fassung „10 Blüten → 1 Kreuz auf dem Blütenpfad“ in
+  `freischaltregeln-sakura.md`.
+- **Grund:** Benedikt hat den Kartentext nachgeliefert und seine frühere Annahme korrigiert.
+
+### 5. Blüten füllen Punkte auf
+- **Entscheidung:** Für jede Karte mit Punktewert zum Freischalten gilt 1 Blüte = 1 Punkt. Bei Karten ohne Auto-Prüfung
+  und bei Sonderplättchen gibt der Spieler einen freien Blütenbetrag aus.
+
+### 6. Pfadende
+- **Entscheidung:** Kreis- und Blütenpfad sind linear und enden jeweils vor Stern 30. Stern 30 wird nur ausgekreuzt, wenn
+  30 Blüten auf einmal bezahlt werden. Ist der Kreispfad bis vor Stern 30 ausgekreuzt, kommen Kreuze der Partie in die noch
+  offenen Kreise, um noch nicht Freigeschaltetes freizuschalten. Der Blütenpfad hat Gabelung an der Moossammlerin (Graph
+  bestätigt). Blüten nach dem Pfadende gehen nur noch in Punkte oder in Stern 30 (Teil „Blüten nur in Punkte oder
+  Stern 30“ ersetzt durch Entscheidung 12).
+- **Grund:** Antwort von Benedikt.
+
+### 7. Benannte Felder auf dem Blütenpfad
+- **Entscheidung:** Sie kosten je 1 Blüte und schalten erst frei, wenn sie selbst ausgekreuzt sind.
+
+### 8. Restliche Felder ohne Verfall
+- **Entscheidung:** Wie im Basisspiel (Entscheidung Schritt 1): Der Spieler wählt, die App kreuzt weiter, gefragt wird nur
+  bei mindestens zwei Möglichkeiten. Kreuze verfallen nur, wenn alle Felder ausgekreuzt sind, es gibt kein „Verfallen lassen“.
+
+### 9. *-Karten (Geschenk, Reiskuchen, Umtrunk)
+- **Entscheidung:** In Partie N eingesetzt, ist die Karte verbraucht. Umdrehen kostet 5 Blüten und ist erst im Blüten-Dialog
+  einer späteren Partie möglich (nicht in der Partie des Einsatzes). Danach ist sie ab der Folgepartie wieder einsetzbar.
+
+### 10. Spalten Rundum und 7er-Aufträge
+- **Entscheidung:** Rundum ist ab der Partie nach „Öffnet Box 1“ offen, die 7er-Aufträge ab der Partie nach dem Öffnen
+  von Box 5. Vorher müssen die Felder 0 sein.
+
+### Auslegung (aus den Docs abgeleitet, keine neue Regel; bei Abweichung bitte melden)
+- **Zählung der Felder:** `fortschrittsbaum-sakura.md` nennt 123 Felder auf dem Kreispfad. Gemessen am Graphen sind es
+  116 (97 Kreise, 8 Sechsecke, 3 Boxen, 4 Karten, 4 „+1“-Quadrate); die übrigen Sechsecke und Quadrate der 123 liegen
+  auf dem Blütenpfad (94 Felder: 87 Sterne und 7 benannte). Die Tests gehen vom Graphen aus.
+- **Restliche Felder, eine Möglichkeit:** Gibt es genau einen offenen Zweig (Eingang), kreuzt die App ohne Frage
+  weiter (Entscheidung 8, „Gefragt wird nur bei mindestens zwei Möglichkeiten“).
+- **Einsetzen einer Gabelung:** Die Frage nach dem Zweig kommt erst bei Bedarf (wie im Basisspiel).
+- **Meisterprüfung und „teil-auto“-Karten:** Bestätigen die Meisterprüfung kostet 10 Blüten zusätzlich zu fehlenden
+  Punkten. Ochsenkarren und Schiff brauchen nur das Bestätigen des Spielers (Straße/Fluss ≥12 Plättchen).
+- **Gesammelte Blüten zählen als Punkte** (auch für die Gesamtsumme der Aufgaben, z. B. Kleine Wolken ≥300).
+- **Namen der Karten:** auf dem Bogen „Kleine Wolken“ und „Schiff und Anlegestelle“; die Docs schreiben „Kleine Wolke“
+  und „Schiff und Angelstelle“. Die App folgt dem Bogen.
+- **Partieende-Eintrag:** Er wird direkt nach dem Speichern des Blatts eingetragen (Kalligraph, Blüten, Bestätigungen)
+  und danach nicht mehr geändert (wie das Wertungsblatt selbst, Entscheidung Schritt 2). Er ist freiwillig: Ohne
+  Eintrag wird nichts ausgegeben. Öffnet man die Kampagne, bevor er gespeichert ist, fragt die Oberfläche erneut;
+  „Nichts eintragen“ speichert einen leeren Eintrag.
+- **Blütensammler:** Solange die Wahl offen ist, sollte kein weiteres Blatt gespeichert werden; die Oberfläche sperrt
+  das Speichern.
+
+### 11. Restliche Felder nur in Laufrichtung
+- **Regel:** Wie werden die Restlichen Felder auf dem Kreispfad gefüllt (Gabelungen an Box 2 und Heiße Quellen)?
+- **Entscheidung:** Nach einer Gabelung muss ein Zweig gewählt werden, die Zweige kommen wieder zusammen (Box 3,
+  Kontor), dann geht es zuerst Richtung Stern 30 weiter. Ist das Pfadende erreicht, darf der noch offene Zweig
+  ausgekreuzt werden, aber nur von der Gabelung (z. B. Heiße Quellen) in Richtung Zusammenführung (Kontor), nie von
+  der Zusammenführung her. Dadurch spielt die Reihenfolge der „+1“-Felder keine Rolle.
+- **Grund:** Antwort von Benedikt auf die Frage zu den „+1“-Quadraten.
+
+### 12. Blütenpfad: Restliche Felder wie auf dem Kreispfad
+- **Regel:** Was geschieht mit Einzelblüten, wenn der gewählte Weg des Blütenpfads vor Stern 30 ausgekreuzt ist?
+- **Entscheidung:** Sie dürfen in den nicht gewählten Zweig (Gabelung an der Moossammlerin), ebenfalls nur in
+  Laufrichtung, bis alle 94 Felder ausgekreuzt sind; danach verfallen Blüten. Das ersetzt den Satz in Entscheidung 6,
+  Blüten nach dem Ende gingen nur noch in Punkte oder Stern 30. Stern 30 bleibt nur mit 30 Blüten auf einmal und
+  erst nach dem gewählten Weg möglich.
+- **Grund:** Antwort von Benedikt; sonst blieben Sumoringer und Reiskuchen bzw. Reisbäuerin und Umtrunk unerreichbar.
+
+## 25.11.2026 – Nextcloud-App und PWA (Schritt 4)
+
+### 1. Kampagnen gemeinsam für alle
+- **Regel:** Wer sieht die Kampagnen in Nextcloud, wo jede Person ihren eigenen Login hat?
+- **Entscheidung:** Alle Nutzer der Instanz sehen und bearbeiten dieselben Kampagnen. Auf die Familie wird die App über
+  die Nextcloud-Einstellung „Für Gruppen aktivieren“ beschränkt.
+- **Grund:** Antwort von Benedikt.
+
+### 2. Nur online
+- **Regel:** Wie verhält sich die PWA ohne Verbindung zum Heimnetz bzw. VPN?
+- **Entscheidung:** Der Service Worker speichert die Oberfläche zwischen. Ohne Verbindung erscheint „Keine Verbindung zur
+  Nextcloud“, gespeichert wird nur auf dem Server.
+- **Grund:** Antwort von Benedikt.
+
+### 3. Keine Übernahme aus dem Prototyp
+- **Entscheidung:** Kampagnen aus dem Browser-Speicher des Prototyps werden nicht übernommen, Nextcloud beginnt leer.
+- **Grund:** Antwort von Benedikt.
+
+### 4. Kein gleichzeitiges Bearbeiten
+- **Regel:** Was gilt, wenn zwei Geräte dieselbe Kampagne bearbeiten?
+- **Entscheidung:** Der Fall ist ausgeschlossen: Es wird immer nur ein Gerät genutzt, Zugriff haben nur zwei Personen.
+  Es gibt keine Versionsprüfung, das letzte Speichern gilt.
+- **Grund:** Antwort von Benedikt.
+
+### 5. Zielsystem und Geräte
+- **Entscheidung:** Ziel ist die vorhandene Nextcloud 31.0.5. Sie hat noch kein HTTPS; die PWA wird vollständig gebaut,
+  HTTPS richtet Benedikt selbst ein. `docker compose` dient nur Entwicklung und Integrationstests. Genutzt werden iPhone
+  und Android.
+- **Grund:** Antwort von Benedikt.
+
+### Technische Auslegung (keine Spielregel; bei Abweichung bitte melden)
+- **Eigene Seite ohne Nextcloud-Rahmen:** Nextcloud setzt im Standard-Rahmen sein eigenes Manifest und
+  Home-Bildschirm-Icon vor alle Angaben einer App. Damit die PWA die Dorfromantik-App installiert, wird die Seite
+  eigenständig ausgeliefert, mit einem Link zurück zur Nextcloud.
+- **Der Server prüft nur das Rohdaten-Prinzip:** Er nimmt genau die Felder aus `src/core/campaigns.js` an und lehnt
+  Änderungen an beendeten Kampagnen ab. Die Spielregeln prüft der Kern in der Oberfläche; Inhalte der Blätter und
+  Entscheidungen prüft der Server nicht.

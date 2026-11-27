@@ -52,10 +52,58 @@ einen Link „zurück zur Nextcloud“.
 
 **Sicherung:** Die Kampagnen liegen in der Nextcloud-Datenbank. Eure übliche Datenbank-Sicherung deckt sie ab.
 
+### Variante: TrueNAS (ersetzt Schritt 2 und 3)
+
+Für eine Nextcloud mit dem offiziellen Docker-Image auf TrueNAS ab 24.10. Alle Befehle laufen in der Weboberfläche
+unter *System → Shell*; der Ablageordner der Nextcloud muss dafür nicht bekannt sein.
+
+1. Auf dem Entwicklungsrechner die sechs Ordner aus Schritt 2 in einen Ordner `dorfromantik/` kopieren und diesen als
+   ZIP packen (z. B. `dorfromantik-0.1.0.zip`). Die ZIP über eine SMB-Freigabe auf das NAS kopieren.
+2. Den Namen des Containers suchen, in dem die Nextcloud selbst läuft (nicht Datenbank, Redis, Cron oder Proxy):
+
+   ```bash
+   sudo docker ps --format '{{.Names}}  {{.Image}}' | grep -i nextcloud
+   ```
+
+3. ZIP-Pfad und Containernamen anpassen, entpacken und nachsehen, ob die App schon vorhanden ist:
+
+   ```bash
+   ZIP=/mnt/<pool>/<dataset>/dorfromantik-0.1.0.zip
+   NC=ix-nextcloud-nextcloud-1
+
+   python3 -m zipfile -e "$ZIP" /tmp/dorf
+   sudo docker exec $NC ls /var/www/html/custom_apps
+   ```
+
+4. Nur weitermachen, wenn der letzte Befehl ohne Fehler durchläuft und **kein** `dorfromantik` anzeigt (bei einem
+   Update siehe unten):
+
+   ```bash
+   sudo docker cp /tmp/dorf/dorfromantik $NC:/var/www/html/custom_apps/
+   sudo docker exec -u root $NC chown -R www-data:www-data /var/www/html/custom_apps/dorfromantik
+   sudo docker exec -u root $NC chmod -R a+rX /var/www/html/custom_apps/dorfromantik
+   sudo docker exec -u www-data $NC php occ app:enable dorfromantik
+   ```
+
+5. Auf die Familie beschränken: in der Nextcloud unter *Benutzer* die Gruppe anlegen, dann bei der App *Auf Gruppen
+   beschränken* (siehe oben).
+
+**Update auf TrueNAS:** `docker cp` würde in einen vorhandenen Ordner einen zweiten Ordner `dorfromantik/` hineinlegen.
+Deshalb vor Schritt 4 den alten App-Ordner im Container entfernen (die Kampagnen liegen in der Datenbank und bleiben
+erhalten) und vor dem Entpacken auch `/tmp/dorf` leeren:
+
+```bash
+sudo rm -rf /tmp/dorf    # vor dem Entpacken in Schritt 3
+sudo docker exec -u root $NC rm -rf /var/www/html/custom_apps/dorfromantik    # vor Schritt 4
+```
+
+Für HTTPS wird das von der CA signierte Server-Zertifikat in den Einstellungen der Nextcloud-App auf TrueNAS
+ausgewählt (siehe Abschnitt 4).
+
 ## 4. HTTPS (Voraussetzung für die Installation als App)
 
-Browser erlauben den Service Worker nur über **HTTPS** (Ausnahme: `localhost`). Eure Nextcloud hat noch keins; das
-richtet ihr selbst ein. Ohne HTTPS läuft die App ganz normal im Browser, lässt sich aber auf Android nicht als App
+Browser erlauben den Service Worker nur über **HTTPS** (Ausnahme: `localhost`). Das richtet ihr selbst ein.
+Ohne HTTPS läuft die App ganz normal im Browser, lässt sich aber auf Android nicht als App
 installieren, und ohne Verbindung erscheint die Fehlerseite des Browsers statt unseres Hinweises.
 
 Darauf kommt es an:
@@ -69,11 +117,37 @@ Darauf kommt es an:
 
 ## 5. Aufs Handy
 
-**Android (Chrome):** Adresse öffnen, anmelden, Menü ⋮ → *App installieren* (oder *Zum Startbildschirm hinzufügen →
-Installieren*).
+Das Handy muss die Nextcloud erreichen (WLAN zu Hause oder VPN) und dem Zertifikat vertrauen (Abschnitt 4).
 
-**iPhone (Safari):** Adresse öffnen, anmelden, *Teilen* → *Zum Home-Bildschirm*. Die App vom Home-Bildschirm hat eine
-eigene Anmeldung, dort also noch einmal anmelden.
+### iPhone (iOS, Safari)
+
+1. Die Adresse der App in **Safari** öffnen und anmelden.
+2. Auf das **Teilen-Symbol** tippen (Quadrat mit Pfeil nach oben). Je nach iOS-Version steht es unten in der Leiste
+   oder erst hinter dem Menü **•••**.
+3. In der Liste nach unten scrollen und **Zum Home-Bildschirm** wählen. Fehlt der Eintrag, unter *Mehr* bzw.
+   *Aktionen bearbeiten* nachsehen.
+4. Gibt es den Schalter **Als Web-App öffnen**, eingeschaltet lassen.
+5. Auf **Hinzufügen** tippen.
+
+Danach die App über das neue Symbol starten. Sie hat eine eigene Anmeldung, dort also **noch einmal anmelden**.
+
+### Android (Chrome)
+
+1. Die Adresse der App in **Chrome** öffnen und anmelden.
+2. Oben rechts auf das Menü **⋮** tippen.
+3. **App installieren** wählen (oder *Zum Startbildschirm hinzufügen → Installieren*).
+4. Mit **Installieren** bestätigen.
+
+Danach die App über das neue Symbol starten. Der Weg unter Android ist noch auf keinem echten Gerät geprüft, die
+Menütexte können je nach Version abweichen.
+
+### Prüfen
+
+- Die App startet vom Symbol **ohne Adressleiste** bzw. Browser-Leisten.
+- Im Flugmodus erscheint beim Öffnen **„Keine Verbindung zur Nextcloud“**.
+
+In der Handy-App von Nextcloud taucht Dorfromantik nach unserem Kenntnisstand nicht von selbst auf; gedacht ist der
+Start über das eigene Symbol.
 
 ## Verhalten im Alltag
 
